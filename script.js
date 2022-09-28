@@ -28,7 +28,7 @@ let mouseX
 let mouseY
 const maxEnemySize = 30
 const minEnemySize = 5
-const gameMode = 'machine gun'
+const gameMode = 'normal'
 
 class Player {
   constructor (x, y, radius, colour) {
@@ -134,15 +134,15 @@ class Enemy {
       if (Math.random() < 0.5) {
         this.type = 'Hopping'
         this.colour = this.colour.replace('50%', '25%')
-      }
-
-      if (Math.random() < 0.5) {
-        this.type = 'Drunk'
-        this.colour = this.colour.replace('50%', '25%')
         if (Math.random() < 0.5) {
           this.type = 'Homing-Hopping'
           this.colour = this.colour.replace('25%', '50%')
         }
+      }
+
+      if (Math.random() < 0.25) {
+        this.type = 'Drunk'
+        this.colour = this.colour.replace('50%', '25%')
       }
       this.radius += 10
     }
@@ -172,17 +172,17 @@ class Enemy {
       if (this.radians >= 2 * Math.PI) {
         this.radians = this.radians %
           (2 * Math.PI)
+      }
 
-        this.center.x += this.velocity.x
-        this.center.y += this.velocity.y
+      this.center.x += this.velocity.x
+      this.center.y += this.velocity.y
 
-        if (this.type === 'Drunk') {
-          this.x = this.center.x + Math.cos(this.radians) * 30
-          this.y = this.center.y + Math.sin(this.radians) * 30
-        } else if (this.type === 'Hopping') {
-          this.x = this.center.x + Math.cos(this.radians) * 10
-          this.y = this.center.y + Math.sin(this.radians) * 10
-        }
+      if (this.type === 'Drunk') {
+        this.x = this.center.x + Math.cos(this.radians) * (15 + this.radius)
+        this.y = this.center.y + Math.sin(this.radians) * (15 + this.radius)
+      } else if (this.type === 'Hopping') {
+        this.x = this.center.x + Math.cos(this.radians) * (5 + this.radius)
+        this.y = this.center.y + Math.sin(this.radians) * (5 + this.radius)
       }
     } else if (this.type === 'Homing-Hopping') {
       this.radians += 0.1
