@@ -1,0 +1,31 @@
+<!DOCTYPE html>
+
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Best Game Ever</title>
+    <script src="./GSAP/gsap.min.js"></script>
+    <script src="./GSAP/CustomEase.min.js"></script>
+    <script src="./script.js" defer></script>
+    <link rel="stylesheet" href="./style.css" />
+  </head>
+
+  <body>
+    <div class="scoreboard">
+      <p>Score: <span id="score">0</span></p>
+    </div>
+
+    <div class="float" id="menu">
+      <div class="background">
+        <h1 id="bigScore">0</h1>
+        <p class="label">Points</p>
+        <div>
+          <button id="start">Start Game</button>
+        </div>
+      </div>
+    </div>
+    <canvas id="canvas" width="500" height="500"></canvas>
+  </body>
+</html>
