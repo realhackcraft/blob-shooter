@@ -32,6 +32,7 @@ let start = false
 let mouseX
 let mouseY
 let mouseDown
+let projectileSize = 5
 let powerUps = []
 const maxEnemySize = 30
 const minEnemySize = 5
@@ -79,7 +80,7 @@ function spawnEnemies () {
 
 function spawnPowerUps () {
   powerUpInterval = setInterval(() => {
-    let pos = spawnOnEdge(16, 16)// Width and height of image
+    let pos = spawnOnEdge(16, 16) // Width and height of image
     const angle = Math.atan2(randomPos.y - pos.y, randomPos.x - pos.x)
     const velocity = {
       x: Math.cos(angle),
@@ -233,8 +234,8 @@ function animate () {
         }
         scoreEl.innerHTML = score
 
-        if (enemy.radius - 10 > 10) {
-          gsap.to(enemy, { radius: enemy.radius - 10 })
+        if (enemy.radius - player.damage > player.damage) {
+          gsap.to(enemy, { radius: enemy.radius - player.damage })
           projectiles.splice(playerIndex, 1)
         } else {
           // Enemy dead
@@ -264,7 +265,7 @@ function shoot (x, y) {
       }
 
       projectiles.push(
-        new Projectile(player.x, player.y, 5, 'white', velocity))
+        new Projectile(player.x, player.y, projectileSize, 'white', velocity))
     }
   }
 }
@@ -282,7 +283,7 @@ function shootMachineGun () {
       }
 
       projectiles.push(
-        new Projectile(player.x, player.y, 5, 'yellow', velocity))
+        new Projectile(player.x, player.y, projectileSize, 'yellow', velocity))
     }
   }
 }

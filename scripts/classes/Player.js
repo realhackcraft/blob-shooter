@@ -6,6 +6,7 @@ class Player {
     this.colour = colour
     this.shootingCooldown = 10
     this.powerUp = ''
+    this.damage = projectileSize * 2
     this.velocity = {
       x: 0,
       y: 0,

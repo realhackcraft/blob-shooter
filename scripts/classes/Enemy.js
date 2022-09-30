@@ -80,7 +80,7 @@ class Enemy {
       }
 
       const angle = Math.atan2(player.y - this.center.y,
-        player.x - this.center.x)
+                               player.x - this.center.x)
       this.velocity.x = Math.cos(angle)
       this.velocity.y = Math.sin(angle)
 
@@ -93,6 +93,5 @@ class Enemy {
       this.x += this.velocity.x
       this.y += this.velocity.y
     }
-    console.log(enemies.length)
   }
 }
