@@ -81,7 +81,7 @@ function spawnPowerUps () {
       y: Math.sin(angle),
     }
     powerUps.push(new PowerUp(pos.x, pos.y, velocity))
-  }, Math.random() * (2000 - 1500) + 1500)
+  }, Math.random() * (60000 - 40000) + 40000)
 }
 
 function spawnOnEdge (width, height) {
