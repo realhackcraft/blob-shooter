@@ -6,6 +6,10 @@ const startGameBtn = document.getElementById('start')
 const menu = document.getElementById('menu')
 const scoreEl = document.getElementById('score')
 const endScore = document.getElementById('bigScore')
+const endHighScore = document.getElementById('highScore')
+endHighScore.innerHTML = localStorage.getItem('highScore') == null
+  ? localStorage.setItem('highScore', 0)
+  : localStorage.getItem('highScore')
 // tweaking canvas
 
 canvas.width = innerWidth
@@ -69,7 +73,7 @@ function spawnEnemies () {
     }
     const colour = `hsl(${Math.random() * 360}, 50%, 50%)`
     enemies.push(new Enemy(pos.x, pos.y, radius, colour, velocity))
-  }, Math.random() * (3000 - 800) + 800)
+  }, Math.random() * (2000 - 800) + 800)
 }
 
 function spawnPowerUps () {
@@ -171,6 +175,7 @@ function animate () {
       start = false
       cancelAnimationFrame(animationID)
       endScore.innerHTML = score
+      endHighScore.innerHTML = localStorage.getItem('highScore')
       menu.style.display = 'flex'
       gsap.fromTo(
         '#menu',
@@ -213,6 +218,10 @@ function animate () {
         // add to score
 
         score += Math.ceil(enemy.radius / 5)
+        if (score > localStorage.getItem('highScore')) {
+          localStorage.setItem(
+            'highScore', score)
+        }
         scoreEl.innerHTML = score
 
         if (enemy.radius - 10 > 10) {
