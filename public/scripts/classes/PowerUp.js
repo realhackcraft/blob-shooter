@@ -13,7 +13,7 @@ class PowerUp {
     })
 
     this.image = new Image()
-    this.image.src = './res/img/powerUp.png'
+    this.image.src = '../../../res/img/powerUp.png'
   }
 
   update () {

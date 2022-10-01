@@ -68,14 +68,14 @@ function spawnEnemies () {
   enemyInterval = setInterval(() => {
     const radius = Math.random() * (maxEnemySize - minEnemySize) + minEnemySize
     let pos = spawnOnEdge(radius, radius)
-    const angle = Math.atan2(canvasCenter.y - pos.y, canvasCenter.x - pos.x)
+    const angle = Math.atan2(player.y - pos.y, player.x - pos.x)
     const velocity = {
       x: Math.cos(angle),
       y: Math.sin(angle),
     }
     const colour = `hsl(${Math.random() * 360}, 50%, 50%)`
     enemies.push(new Enemy(pos.x, pos.y, radius, colour, velocity))
-  }, Math.random() * (2000 - 800) + 800)
+  }, Math.random() * (1500 - 700) + 700)
 }
 
 function spawnPowerUps () {
@@ -123,6 +123,18 @@ function animate () {
   powerUps.forEach((powerUp, pIndex) => {
     powerUp.update()
 
+    // Remove off-screen powerUps
+    if (
+      powerUp.x + powerUp.radius < 0 ||
+      powerUp.x - powerUp.radius > canvas.width ||
+      powerUp.y + powerUp.radius < 0 ||
+      powerUp.y - powerUp.radius > canvas.height
+    ) {
+      setTimeout(() => {
+        powerUps.splice(pIndex, 1)
+      }, 0)
+    }
+
     const dist = Math.hypot(
       player.x - powerUp.x,
       player.y - powerUp.y,
@@ -132,8 +144,10 @@ function animate () {
     if (dist < powerUp.image.height / 2 + player.radius) {
       powerUps.splice(pIndex, 1)
       player.powerUp = 'machine gun'
+      player.colour = 'gold'
       setTimeout(() => {
         player.powerUp = ''
+        player.colour = 'white'
       }, 20000)
     }
   })
@@ -162,7 +176,7 @@ function animate () {
   projectiles.forEach((projectile, pIndex) => {
     projectile.update()
 
-    // remove off-screen projectiles
+    // Remove off-screen projectiles
     if (
       projectile.x + projectile.radius < 0 ||
       projectile.x - projectile.radius > canvas.width ||
@@ -202,6 +216,18 @@ function animate () {
       )
       startGameBtn.innerHTML = 'Restart'
       addEventListener('keydown', startGameBind)
+    }
+
+    // Remove off-screen enemies
+    if (
+      enemy.x + enemy.radius < 0 ||
+      enemy.x - enemy.radius > canvas.width ||
+      enemy.y + enemy.radius < 0 ||
+      enemy.y - enemy.radius > canvas.height
+    ) {
+      setTimeout(() => {
+        enemies.splice(eIndex, 1)
+      }, 0)
     }
 
     projectiles.forEach((projectile, playerIndex) => {
