@@ -1,19 +1,27 @@
 {
+  "$schema": "../../../node_modules/@tauri-apps/cli/schema.json",
   "build": {
-    "distDir": "../public",
-    "devPath": "http://127.0.0.1:6969",
-    "beforeDevCommand": "kill -9 $(lsof -i :3003 -t) &>/dev/null || true && http-server -p 6969",
-    "beforeBuildCommand": "kill -9 $(lsof -i :3003 -t) &>/dev/null || true && http-server -p 6969"
+    "beforeBuildCommand": "",
+    "beforeDevCommand": "kill -9 $(lsof -i :3003 -t) &>/dev/null || true && http-server -p 42069",
+    "devPath": "http://127.0.0.1:42069",
+    "distDir": "../public"
   },
-  "ctx": {},
+  "package": {
+    "productName": "Blob Shooter",
+    "version": "1.0.0"
+  },
   "tauri": {
-    "embeddedServer": {
-      "active": true
+    "allowlist": {
+      "all": true
     },
     "bundle": {
       "active": true,
-      "targets": "all",
-      "identifier": "net.hackcraft.blob-shooter",
+      "category": "DeveloperTool",
+      "copyright": "",
+      "deb": {
+        "depends": []
+      },
+      "externalBin": [],
       "icon": [
         "icons/32x32.png",
         "icons/128x128.png",
@@ -21,36 +29,38 @@
         "icons/icon.icns",
         "icons/icon.ico"
       ],
-      "resources": [],
-      "externalBin": [],
-      "copyright": "",
-      "category": "DeveloperTool",
-      "shortDescription": "",
+      "identifier": "net.hackcraft.blob-shooter",
       "longDescription": "",
-      "deb": {
-        "depends": [],
-        "useBootstrapper": false
-      },
-      "osx": {
+      "macOS": {
+        "entitlements": null,
+        "exceptionDomain": "",
         "frameworks": [],
-        "minimumSystemVersion": "",
-        "useBootstrapper": false
+        "providerShortName": null,
+        "signingIdentity": null
       },
-      "exceptionDomain": ""
-    },
-    "allowlist": {
-      "all": true
-    },
-    "window": {
-      "title": "Blob Shooter",
-      "resizable": false,
-      "fullscreen": true
+      "resources": [],
+      "shortDescription": "",
+      "targets": "all",
+      "windows": {
+        "certificateThumbprint": null,
+        "digestAlgorithm": "sha256",
+        "timestampUrl": ""
+      }
     },
     "security": {
-      "csp": "default-src blob: data: filesystem: ws: http: https: 'unsafe-eval' 'unsafe-inline'"
+      "csp": null
     },
-    "inliner": {
-      "active": true
-    }
+    "updater": {
+      "active": false
+    },
+    "windows": [
+      {
+        "fullscreen": false,
+        "height": 600,
+        "resizable": true,
+        "title": "Blob Shooter",
+        "width": 800
+      }
+    ]
   }
 }

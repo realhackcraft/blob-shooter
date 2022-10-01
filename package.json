@@ -1,0 +1,23 @@
+{
+  "name": "blob-shooter",
+  "version": "1.0.0",
+  "description": "A game where you shoot blobs.",
+  "main": "index.js",
+  "scripts": {
+    "tauri": "tauri"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/realhackcraft/Blob-Shooter.git"
+  },
+  "keywords": [
+    "game",
+    "shooter"
+  ],
+  "author": "Hackcraft_",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/realhackcraft/Blob-Shooter/issues"
+  },
+  "homepage": "https://github.com/realhackcraft/Blob-Shooter#readme"
+}
