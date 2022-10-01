@@ -74,3 +74,8 @@ addEventListener('mousemove', (event) => {
   mouseX = event.clientX // Gets Mouse X
   mouseY = event.clientY // Gets Mouse Y
 })
+
+addEventListener('resize', () => {
+  canvas.width = window.innerWidth
+  canvas.height = window.innerHeight
+})
