@@ -1,7 +1,8 @@
 class Player {
-  constructor (x, y, radius, colour) {
+  constructor (x, y, speed, radius, colour) {
     this.x = x
     this.y = y
+    this.speed = speed
     this.radius = radius
     this.colour = colour
     this.shootingCooldown = 10

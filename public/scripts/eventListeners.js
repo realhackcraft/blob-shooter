@@ -53,19 +53,19 @@ addEventListener('keydown', (e) => {
   switch (e.key) {
     case 'w':
     case 'ArrowUp':
-      player.velocity.y -= 1
+      player.velocity.y -= player.speed
       break
     case 'a':
     case 'ArrowLeft':
-      player.velocity.x -= 1
+      player.velocity.x -= player.speed
       break
     case 's':
     case 'ArrowDown':
-      player.velocity.y += 1
+      player.velocity.y += player.speed
       break
     case 'd':
     case 'ArrowRight':
-      player.velocity.x += 1
+      player.velocity.x += player.speed
       break
   }
 })

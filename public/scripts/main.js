@@ -41,7 +41,7 @@ const randomPos = {
   y: Math.random() * canvasCenter.y,
 }
 
-const player = new Player(canvasCenter.x, canvasCenter.y, 10, 'white')
+const player = new Player(canvasCenter.x, canvasCenter.y, 1.3, 10, 'white')
 
 projectiles = []
 particles = []
