@@ -19,12 +19,12 @@ let canvasCenter = {
 }
 // define vars and constants
 
-const friction = 0.99
 let score = 0
 let highScore = localStorage.getItem('highScore') === null
   ? localStorage.setItem('highScore', score.toString())
   : localStorage.getItem('highScore')
 endHighScore.innerHTML = highScore
+let animationID
 let projectiles
 let particles
 let enemies
@@ -34,6 +34,8 @@ let mouseY
 let mouseDown
 let projectileSize = 5
 let powerUps = []
+const FPS = 60
+const friction = 0.99
 const maxEnemySize = 30
 const minEnemySize = 5
 const randomPos = {
@@ -41,7 +43,7 @@ const randomPos = {
   y: Math.random() * canvasCenter.y,
 }
 
-const player = new Player(canvasCenter.x, canvasCenter.y, 1.3, 10, 'white')
+const player = new Player(canvasCenter.x, canvasCenter.y, 10, 10, 'white')
 
 projectiles = []
 particles = []
@@ -111,10 +113,8 @@ function resetHighScore () {
   }
 }
 
-let animationID
 
 function animate () {
-  animationID = requestAnimationFrame(animate)
   ctx.fillStyle = 'rgba(0, 0, 0, 0.1)'
   ctx.fillRect(0, 0, canvas.width, canvas.height)
 
@@ -197,7 +197,7 @@ function animate () {
     // Dead, end the game
     if (dist - enemy.radius - player.radius < 1) {
       start = false
-      cancelAnimationFrame(animationID)
+      clearInterval(animationID)
       endScore.innerHTML = score
       endHighScore.innerHTML = highScore
       menu.style.display = 'flex'
@@ -237,7 +237,7 @@ function animate () {
       if (dist - enemy.radius - projectile.radius < 1) {
         // Spawn particles for enemy
 
-        for (let i = 0; i < enemy.radius * 2; i++) {
+        for (let i = 0; i < enemy.radius * 3; i++) {
           particles.push(
             new Particle(
               enemy.x,
@@ -268,7 +268,6 @@ function animate () {
               ),
           )
         }
-
         // add to score
 
         score += Math.ceil(enemy.radius / 5)

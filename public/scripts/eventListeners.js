@@ -21,7 +21,7 @@ addEventListener('mouseup', () => {
 function startGame () {
   setTimeout(() => {
     init()
-    animate()
+    animationID = setInterval(animate, 1000 / FPS)
 
     spawnEnemies()
     spawnPowerUps()
@@ -53,19 +53,36 @@ addEventListener('keydown', (e) => {
   switch (e.key) {
     case 'w':
     case 'ArrowUp':
-      player.velocity.y -= player.speed
-      break
-    case 'a':
-    case 'ArrowLeft':
-      player.velocity.x -= player.speed
+      player.direction.y = 'up'
       break
     case 's':
     case 'ArrowDown':
-      player.velocity.y += player.speed
+      player.direction.y = 'down'
+      break
+    case 'a':
+    case 'ArrowLeft':
+      player.direction.x = 'left'
       break
     case 'd':
     case 'ArrowRight':
-      player.velocity.x += player.speed
+      player.direction.x = 'right'
+      break
+  }
+})
+
+addEventListener('keyup', (e) => {
+  switch (e.key) {
+    case 'w':
+    case 'ArrowUp':
+    case 's':
+    case 'ArrowDown':
+      player.direction.y = 'none'
+      break
+    case 'a':
+    case 'ArrowLeft':
+    case 'd':
+    case 'ArrowRight':
+      player.direction.x = 'none'
       break
   }
 })
