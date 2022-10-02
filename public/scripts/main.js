@@ -13,7 +13,7 @@ canvas.width = innerWidth
 canvas.height = innerHeight
 // define commonly used value
 
-const canvasCenter = {
+let canvasCenter = {
   x: canvas.width / 2,
   y: canvas.height / 2,
 }
