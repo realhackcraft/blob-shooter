@@ -35,7 +35,7 @@ let mouseDown
 let projectileSize = 5
 let powerUps = []
 const FPS = 60
-const friction = 0.99
+const friction = 0.95
 const maxEnemySize = 30
 const minEnemySize = 5
 const randomPos = {

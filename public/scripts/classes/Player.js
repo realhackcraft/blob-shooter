@@ -3,6 +3,8 @@ class Player {
     this.x = x
     this.y = y
     this.speed = speed / FPS
+    this.sprintingSpeed = this.speed * 1.5
+    this.sprint = false
     this.radius = radius
     this.colour = colour
     this.shootingCooldown = 10
@@ -27,7 +29,6 @@ class Player {
 
   update () {
     this.draw()
-    this.move()
     this.shootingCooldown--
 
     // x boundary
@@ -50,28 +51,28 @@ class Player {
       this.velocity.y = 0
     }
 
-    // friction
-    const friction = 0.95
-
     this.velocity.x *= friction
     this.velocity.y *= friction
+
+    this.move()
   }
 
   move() {
+    console.log(this.sprint)
     switch (this.direction.y) {
       case 'up':
-        this.velocity.y -= this.speed
+        this.velocity.y -= this.sprint ? this.sprintingSpeed : this.speed
         break
       case 'down':
-        this.velocity.y += this.speed
+        this.velocity.y += this.sprint ? this.sprintingSpeed : this.speed
         break
     }
     switch (this.direction.x) {
       case 'left':
-        this.velocity.x -= this.speed
+        this.velocity.x -= this.sprint ? this.sprintingSpeed : this.speed
         break
       case 'right':
-        this.velocity.x += this.speed
+        this.velocity.x += this.sprint ? this.sprintingSpeed : this.speed
         break
     }
     console.log(this.direction)

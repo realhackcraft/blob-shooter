@@ -8,13 +8,6 @@ addEventListener('click', (event) => {
   }
 })
 
-addEventListener('mousedown', () => {
-  mouseDown = true
-})
-
-addEventListener('mouseup', () => {
-  mouseDown = false
-})
 
 // start game button actions and animations
 
@@ -38,7 +31,7 @@ function startGame () {
 }
 
 const startGameOnEnter = function (event) {
-  if (event.key === 'Enter') {
+  if (event.code === 'Enter') {
     startGame()
     removeEventListener('keydown', startGameBind)
   }
@@ -50,41 +43,66 @@ startGameBtn.addEventListener('click', startGame)
 addEventListener('keydown', startGameBind)
 
 addEventListener('keydown', (e) => {
-  switch (e.key) {
-    case 'w':
+  switch (e.code) {
+    case 'KeyW':
     case 'ArrowUp':
       player.direction.y = 'up'
       break
-    case 's':
+    case 'KeyS':
     case 'ArrowDown':
       player.direction.y = 'down'
       break
-    case 'a':
+    case 'KeyA':
     case 'ArrowLeft':
       player.direction.x = 'left'
       break
-    case 'd':
+    case 'KeyD':
     case 'ArrowRight':
       player.direction.x = 'right'
       break
   }
 })
 
+addEventListener('keydown', (e) => {
+  switch (e.code) {
+    case 'Space':
+      player.sprint = true
+      break
+  }
+  console.log(e)
+})
+
 addEventListener('keyup', (e) => {
-  switch (e.key) {
-    case 'w':
+  switch (e.code) {
+    case 'Space':
+      player.sprint = false
+      break
+  }
+})
+
+addEventListener('keyup', (e) => {
+  switch (e.code) {
+    case 'KeyW':
     case 'ArrowUp':
-    case 's':
+    case 'KeyS':
     case 'ArrowDown':
       player.direction.y = 'none'
       break
-    case 'a':
+    case 'KeyA':
     case 'ArrowLeft':
-    case 'd':
+    case 'KeyD':
     case 'ArrowRight':
       player.direction.x = 'none'
       break
   }
+})
+
+addEventListener('mousedown', () => {
+  mouseDown = true
+})
+
+addEventListener('mouseup', () => {
+  mouseDown = false
 })
 
 addEventListener('mousemove', (event) => {
