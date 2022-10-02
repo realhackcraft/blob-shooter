@@ -235,13 +235,13 @@ function animate () {
       // Enemy damaged
 
       if (dist - enemy.radius - projectile.radius < 1) {
-        // Spawn particles
+        // Spawn particles for enemy
 
         for (let i = 0; i < enemy.radius * 2; i++) {
           particles.push(
             new Particle(
-              projectile.x,
-              projectile.y,
+              enemy.x,
+                enemy.y,
               Math.random() * 3,
               enemy.colour,
               {
@@ -251,6 +251,24 @@ function animate () {
             ),
           )
         }
+
+        // Spawn particles for projectile
+
+        for (let i = 0; i < projectileSize * 2; i++) {
+          particles.push(
+              new Particle(
+                  projectile.x,
+                  projectile.y,
+                  Math.random() * 3,
+                  projectile.colour,
+                  {
+                    x: (Math.random() - 0.5) * (Math.random() * 5),
+                    y: (Math.random() - 0.5) * (Math.random() * 5),
+                  },
+              ),
+          )
+        }
+
         // add to score
 
         score += Math.ceil(enemy.radius / 5)
