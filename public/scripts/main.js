@@ -25,7 +25,8 @@ function spawnEnemies () {
                                   x: Math.cos(angle),
                                   y: Math.sin(angle),
                                 }
-                                enemies.push(new Enemy(pos.x, pos.y, radius, randomEnemyColor(), velocity))
+                                enemies.push(new Enemy(pos.x, pos.y, radius, randomEnemyColor(), velocity,
+                                                       randomNumber(0.5, 2)))
                               }, randomNumber(2000 - (score / 4 <= 1000 ? score / 4 : 1000), 700),
   )
 }
@@ -97,9 +98,9 @@ function createScoreLabel (score) {
   scoreLabel.style.position = 'absolute'
   scoreLabel.style.userSelect = 'none'
   document.body.appendChild(scoreLabel)
-  scoreLabel.style.left = player.x - scoreLabel.offsetWidth / 2 +
+  scoreLabel.style.left = mouse.x - scoreLabel.offsetWidth / 2 +
     randomNumber(-5, 5) + 'px'
-  scoreLabel.style.top = player.y - scoreLabel.offsetHeight / 2 -
+  scoreLabel.style.top = mouse.y - scoreLabel.offsetHeight / 2 -
     player.radius - 10 + randomNumber(-5, 5) + 'px'
 
   gsap.to(scoreLabel, {
@@ -211,7 +212,7 @@ function animate () {
       reset()
     }
 
-    removeEntityIfOffscreen(enemy, enemyIndex, enemies)
+    removeEntityIfOffscreen(enemy.center, enemyIndex, enemies)
 
     projectiles.forEach((projectile, projectileIndex) => {
       const dist = Math.hypot(projectile.x - enemy.x, projectile.y - enemy.y)
@@ -322,6 +323,7 @@ function changeBPColor (color) {
       color: 'white',
       alpha: 0.9,
     })
+
     gsap.to(backgroundParticle, {
       color,
       alpha: 0.1,

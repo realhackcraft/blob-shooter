@@ -1,12 +1,9 @@
-class Player {
-  constructor (x, y, speed, radius, colour) {
-    this.x = x
-    this.y = y
+class Player extends Entity {
+  constructor (x, y, speed, radius, color) {
+    super(x, y, radius, color, 1)
     this.speed = speed / FPS
     this.sprintingSpeed = this.speed * 1.5
     this.sprint = false
-    this.radius = radius
-    this.colour = colour
     this.shootingCooldown = 10
     this.powerUp = ''
     this.damage = projectileSize * 2
@@ -18,13 +15,6 @@ class Player {
       x: 0,
       y: 0,
     }
-  }
-
-  draw () {
-    ctx.beginPath()
-    ctx.arc(this.x, this.y, this.radius, 0, Math.PI * 2, false)
-    ctx.fillStyle = this.colour
-    ctx.fill()
   }
 
   update () {

@@ -1,10 +1,8 @@
-class Enemy {
-  constructor (x, y, radius, color, velocity) {
-    this.x = x
-    this.y = y
-    this.radius = radius
+class Enemy extends Entity {
+  constructor (x, y, radius, color, velocity, speed) {
+    super(x, y, radius, color, 1)
     this.radians = 0
-    this.color = color
+    this.speed = speed
     this.velocity = velocity
     this.center = {
       x,
@@ -34,14 +32,6 @@ class Enemy {
     }
   }
 
-  draw () {
-    ctx.beginPath()
-    ctx.arc(this.x, this.y, this.radius, 0, Math.PI * 2, false)
-    ctx.fillStyle = this.color
-
-    ctx.fill()
-  }
-
   update () {
     this.draw()
 
@@ -50,8 +40,11 @@ class Enemy {
       this.velocity.x = Math.cos(angle)
       this.velocity.y = Math.sin(angle)
 
-      this.x += this.velocity.x
-      this.y += this.velocity.y
+      this.x += this.velocity.x * this.speed
+      this.y += this.velocity.y * this.speed
+
+      this.center.x = this.x
+      this.center.y = this.y
 
     } else if (this.type === 'Hopping' || this.type === 'Drunk') {
       this.radians += 0.1
@@ -60,8 +53,8 @@ class Enemy {
           (2 * Math.PI)
       }
 
-      this.center.x += this.velocity.x
-      this.center.y += this.velocity.y
+      this.center.x += this.velocity.x * this.speed
+      this.center.y += this.velocity.y * this.speed
 
       if (this.type === 'Drunk') {
         this.x = this.center.x + Math.cos(this.radians) * (15 + this.radius)
@@ -84,14 +77,17 @@ class Enemy {
       this.velocity.x = Math.cos(angle)
       this.velocity.y = Math.sin(angle)
 
-      this.center.x += this.velocity.x
-      this.center.y += this.velocity.y
+      this.center.x += this.velocity.x * this.speed
+      this.center.y += this.velocity.y * this.speed
 
       this.x = this.center.x + Math.cos(this.radians) * 10
       this.y = this.center.y + Math.sin(this.radians) * 10
     } else {
       this.x += this.velocity.x
       this.y += this.velocity.y
+
+      this.center.x = this.x * this.speed
+      this.center.y = this.y * this.speed
     }
   }
 }
