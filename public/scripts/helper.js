@@ -12,3 +12,14 @@ function angleBetween (a = { x, y }, b = { x, y }) {
     a.x - b.x,
   )
 }
+
+function isOffscreen (pos = { x, y }, width, height) {
+  return pos.x + width < 0 ||
+    pos.x - width > canvas.width ||
+    pos.y + height < 0 ||
+    pos.y - height > canvas.height
+}
+
+function randomEnemyColor () {
+  return `hsl(${Math.random() * 360}, 50%, 50%)`
+}

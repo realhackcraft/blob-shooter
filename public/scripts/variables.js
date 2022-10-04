@@ -24,6 +24,7 @@ let highScore = localStorage.getItem('highScore') === null
   : localStorage.getItem('highScore')
 endHighScore.innerHTML = highScore
 let animationID
+let backgroundParticles = []
 let enemies = []
 let particles = []
 let projectiles = []
@@ -32,6 +33,8 @@ let start = false
 let mouse = { x: 0, y: 0 }
 let mouseDown
 let projectileSize = 5
+const bpDensity = 25
+const backgroundColor = 'rgba(0, 0, 0, 0.1)'
 const FPS = 60
 const friction = 0.95
 const maxEnemySize = 30
@@ -41,6 +44,8 @@ const randomPos = {
   y: Math.random() * canvasCenter.y,
 }
 const player = new Player(canvasCenter.x, canvasCenter.y, 10, 10, 'white')
+
+const scoreLabelColor = 'white'
 
 let enemyInterval, powerUpInterval
 

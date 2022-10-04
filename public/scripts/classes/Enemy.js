@@ -1,10 +1,10 @@
 class Enemy {
-  constructor (x, y, radius, colour, velocity) {
+  constructor (x, y, radius, color, velocity) {
     this.x = x
     this.y = y
     this.radius = radius
     this.radians = 0
-    this.colour = colour
+    this.color = color
     this.velocity = velocity
     this.center = {
       x,
@@ -15,20 +15,20 @@ class Enemy {
     // Special enemies
     if (Math.random() < 0.5) {
       this.type = 'Homing'
-      this.colour = this.colour.replace('50%', '75%')
+      this.color = this.color.replace('50%', '75%')
 
       if (Math.random() < 0.5) {
         this.type = 'Hopping'
-        this.colour = this.colour.replace('50%', '25%')
+        this.color = this.color.replace('50%', '25%')
         if (Math.random() < 0.5) {
           this.type = 'Homing-Hopping'
-          this.colour = this.colour.replace('25%', '50%')
+          this.color = this.color.replace('25%', '50%')
         }
       }
 
       if (Math.random() < 0.25) {
         this.type = 'Drunk'
-        this.colour = this.colour.replace('50%', '25%')
+        this.color = this.color.replace('50%', '25%')
       }
       this.radius += 10
     }
@@ -37,7 +37,7 @@ class Enemy {
   draw () {
     ctx.beginPath()
     ctx.arc(this.x, this.y, this.radius, 0, Math.PI * 2, false)
-    ctx.fillStyle = this.colour
+    ctx.fillStyle = this.color
 
     ctx.fill()
   }

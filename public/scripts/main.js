@@ -1,10 +1,11 @@
 function init () {
   score = 0
   scoreEl.innerHTML = score
-  projectiles = []
-  particles = []
+  backgroundParticles = []
   enemies = []
+  particles = []
   powerUps = []
+  projectiles = []
   start = true
   player.x = canvasCenter.x
   player.velocity.x = 0
@@ -12,33 +13,60 @@ function init () {
   player.velocity.y = 0
   clearInterval(enemyInterval)
   clearInterval(powerUpInterval)
+  spawnBackgroundParticles()
 }
 
 function spawnEnemies () {
   enemyInterval = setInterval(() => {
-    const radius = Math.random() * (maxEnemySize - minEnemySize) + minEnemySize
-    let pos = spawnOnEdge(radius, radius)
-    const angle = Math.atan2(player.y - pos.y, player.x - pos.x)
-    const velocity = {
-      x: Math.cos(angle),
-      y: Math.sin(angle),
-    }
-    const colour = `hsl(${Math.random() * 360}, 50%, 50%)`
-    enemies.push(new Enemy(pos.x, pos.y, radius, colour, velocity))
-  }, Math.random() * (2000 - (score / 4 <= 1000 ? score / 4 : 1000) - 700) +
-                                700)
+                                const radius = Math.random() * (maxEnemySize - minEnemySize) + minEnemySize
+                                let pos = spawnOnEdge(radius, radius)
+                                const angle = angleBetween(player, pos)
+                                const velocity = {
+                                  x: Math.cos(angle),
+                                  y: Math.sin(angle),
+                                }
+                                enemies.push(new Enemy(pos.x, pos.y, radius, randomEnemyColor(), velocity))
+                              }, randomNumber(2000 - (score / 4 <= 1000 ? score / 4 : 1000), 700),
+  )
 }
 
 function spawnPowerUps () {
   powerUpInterval = setInterval(() => {
     let pos = spawnOnEdge(16, 16) // Width and height of image
-    const angle = Math.atan2(randomPos.y - pos.y, randomPos.x - pos.x)
+    const angle = angleBetween(randomPos, pos)
     const velocity = {
       x: Math.cos(angle),
       y: Math.sin(angle),
     }
     powerUps.push(new PowerUp(pos.x, pos.y, velocity))
-  }, Math.random() * (60000 - 40000) + 40000)
+  }, randomNumber(40000, 60000))
+}
+
+function SpawnParticles (x, y, color, radius, count, velocity = { max, min }) {
+  for (let i = 0; i < count; i++) {
+    particles.push(
+      new Particle(
+        x,
+        y,
+        radius,
+        color,
+        {
+          x: randomNumber(velocity.min, velocity.max),
+          y: randomNumber(velocity.min, velocity.max),
+        },
+      ),
+    )
+  }
+}
+
+function spawnBackgroundParticles () {
+  for (let y = 0; y < canvas.height + bpDensity;
+    y += bpDensity) {
+    for (let x = 0; x < canvas.width + bpDensity;
+      x += bpDensity) {
+      backgroundParticles.push(new BackgroundParticle(x, y, 3, 'blue'))
+    }
+  }
 }
 
 function spawnOnEdge (width, height) {
@@ -65,7 +93,7 @@ function resetHighScore () {
 function createScoreLabel (score) {
   const scoreLabel = document.createElement('label')
   scoreLabel.innerHTML = score
-  scoreLabel.style.color = 'white'
+  scoreLabel.style.color = scoreLabelColor
   scoreLabel.style.position = 'absolute'
   scoreLabel.style.userSelect = 'none'
   document.body.appendChild(scoreLabel)
@@ -105,27 +133,27 @@ function reset () {
   addEventListener('keydown', startGameBind)
 }
 
-function SpawnParticles (x, y, color, radius, count, velocity = { max, min }) {
-  for (let i = 0; i < count; i++) {
-    particles.push(
-      new Particle(
-        x,
-        y,
-        radius,
-        color,
-        {
-          x: randomNumber(velocity.min, velocity.max),
-          y: randomNumber(velocity.min, velocity.max),
-        },
-      ),
-    )
-  }
-}
-
 function animate () {
-  ctx.fillStyle = 'rgba(0, 0, 0, 0.1)'
+  ctx.fillStyle = backgroundColor
   ctx.fillRect(0, 0, canvas.width, canvas.height)
 
+  backgroundParticles.forEach(backgroundParticle => {
+    const dist = distance(player, backgroundParticle)
+
+    if (dist < 150) {
+      backgroundParticle.alpha = 0
+      if (dist > 120) {
+        // gsap.fromTo()
+        backgroundParticle.alpha = 0.5
+      }
+    } else if (backgroundParticle.alpha < 0.1) {
+      backgroundParticle.alpha += 0.01
+    } else if (backgroundParticle.alpha > 0.1) {
+      backgroundParticle.alpha -= 0.01
+    }
+
+    backgroundParticle.draw()
+  })
   player.update()
 
   powerUps.forEach((powerUp, powerUpIndex) => {
@@ -164,10 +192,8 @@ function animate () {
 
     // Remove off-screen projectiles
     if (
-      projectile.x + projectile.radius < 0 ||
-      projectile.x - projectile.radius > canvas.width ||
-      projectile.y + projectile.radius < 0 ||
-      projectile.y - projectile.radius > canvas.height
+      isOffscreen(projectile, projectile.radius,
+                  projectile.radius)
     ) {
       setTimeout(() => {
         projectiles.splice(pIndex, 1)
@@ -214,7 +240,8 @@ function animate () {
         if (enemy.radius - player.damage > player.damage) {
           damageEnemy(enemy, projectile, projectileIndex, newScore)
         } else {
-          killEnemy(enemyIndex, projectileIndex, projectile, newScore + 20)
+          killEnemy(enemyIndex, projectileIndex, enemy, projectile,
+                    newScore + 20)
         }
         scoreEl.innerHTML = score.toString()
       }
@@ -235,8 +262,9 @@ function removeEntityIfOffscreen (entity, index, entityArray) {
   }
 }
 
-function killEnemy (enemyIndex, projectileIndex, projectile, newScore) {
+function killEnemy (enemyIndex, projectileIndex, enemy, projectile, newScore) {
   createScoreLabel(newScore)
+  changeBPColor(enemy.color)
   enemies.splice(enemyIndex, 1)
   projectiles.splice(projectileIndex, 1)
   score += newScore
@@ -286,4 +314,17 @@ function shootMachineGun () {
 
   player.shootingCooldown = 4
 
+}
+
+function changeBPColor (color) {
+  backgroundParticles.forEach(backgroundParticle => {
+    gsap.set(backgroundParticle, {
+      color: 'white',
+      alpha: 0.9,
+    })
+    gsap.to(backgroundParticle, {
+      color,
+      alpha: 0.1,
+    })
+  })
 }
