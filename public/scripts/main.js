@@ -7,33 +7,32 @@ const menu = document.getElementById('menu')
 const scoreEl = document.getElementById('score')
 const endScore = document.getElementById('bigScore')
 const endHighScore = document.getElementById('highScore')
-// tweaking canvas
 
 canvas.width = innerWidth
 canvas.height = innerHeight
-// define commonly used value
 
+// Define commonly used value
 let canvasCenter = {
   x: canvas.width / 2,
   y: canvas.height / 2,
 }
-// define vars and constants
 
+// Define vars and constants
 let score = 0
 let highScore = localStorage.getItem('highScore') === null
   ? localStorage.setItem('highScore', score.toString())
   : localStorage.getItem('highScore')
 endHighScore.innerHTML = highScore
 let animationID
-let projectiles
-let particles
-let enemies
+let enemies = []
+let particles = []
+let projectiles = []
+let powerUps = []
 let start = false
 let mouseX
 let mouseY
 let mouseDown
 let projectileSize = 5
-let powerUps = []
 const FPS = 60
 const friction = 0.95
 const maxEnemySize = 30
@@ -42,12 +41,8 @@ const randomPos = {
   x: Math.random() * canvasCenter.x,
   y: Math.random() * canvasCenter.y,
 }
-
 const player = new Player(canvasCenter.x, canvasCenter.y, 10, 10, 'white')
 
-projectiles = []
-particles = []
-enemies = []
 let enemyInterval, powerUpInterval
 
 function init () {
@@ -112,7 +107,6 @@ function resetHighScore () {
     localStorage.setItem('highScore', highScore)
   }
 }
-
 
 function animate () {
   ctx.fillStyle = 'rgba(0, 0, 0, 0.1)'
@@ -241,12 +235,12 @@ function animate () {
           particles.push(
             new Particle(
               enemy.x,
-                enemy.y,
+              enemy.y,
               Math.random() * 3,
               enemy.colour,
               {
-                x: (Math.random() - 0.5) * (Math.random() * 5),
-                y: (Math.random() - 0.5) * (Math.random() * 5),
+                x: (Math.random() - 0.5) * (Math.random() * 7),
+                y: (Math.random() - 0.5) * (Math.random() * 7),
               },
             ),
           )
@@ -256,16 +250,16 @@ function animate () {
 
         for (let i = 0; i < projectileSize * 2; i++) {
           particles.push(
-              new Particle(
-                  projectile.x,
-                  projectile.y,
-                  Math.random() * 3,
-                  projectile.colour,
-                  {
-                    x: (Math.random() - 0.5) * (Math.random() * 5),
-                    y: (Math.random() - 0.5) * (Math.random() * 5),
-                  },
-              ),
+            new Particle(
+              projectile.x,
+              projectile.y,
+              Math.random() * 3,
+              projectile.colour,
+              {
+                x: (Math.random() - 0.5) * (Math.random() * 5),
+                y: (Math.random() - 0.5) * (Math.random() * 5),
+              },
+            ),
           )
         }
         // add to score
