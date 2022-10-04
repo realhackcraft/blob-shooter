@@ -33,7 +33,7 @@ let start = false
 let mouse = { x: 0, y: 0 }
 let mouseDown
 let projectileSize = 5
-const bpDensity = 25
+const bpDensity = 30
 const backgroundColor = 'rgba(0, 0, 0, 0.1)'
 const FPS = 60
 const friction = 0.95

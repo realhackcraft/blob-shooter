@@ -68,7 +68,6 @@ addEventListener('keydown', (e) => {
       player.sprint = true
       break
   }
-  console.log(e)
 })
 
 addEventListener('keyup', (e) => {
