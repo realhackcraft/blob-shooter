@@ -8,7 +8,6 @@ addEventListener('click', (event) => {
   }
 })
 
-
 // start game button actions and animations
 
 function startGame () {
@@ -106,8 +105,8 @@ addEventListener('mouseup', () => {
 })
 
 addEventListener('mousemove', (event) => {
-  mouseX = event.clientX // Gets Mouse X
-  mouseY = event.clientY // Gets Mouse Y
+  mouse.x = event.clientX // Gets Mouse X
+  mouse.y = event.clientY // Gets Mouse Y
 })
 
 addEventListener('resize', () => {

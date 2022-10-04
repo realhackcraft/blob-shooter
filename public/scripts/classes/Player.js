@@ -12,7 +12,7 @@ class Player {
     this.damage = projectileSize * 2
     this.direction = {
       x: 'none',
-      y: 'none'
+      y: 'none',
     }
     this.velocity = {
       x: 0,
@@ -57,8 +57,7 @@ class Player {
     this.move()
   }
 
-  move() {
-    console.log(this.sprint)
+  move () {
     switch (this.direction.y) {
       case 'up':
         this.velocity.y -= this.sprint ? this.sprintingSpeed : this.speed
@@ -75,6 +74,5 @@ class Player {
         this.velocity.x += this.sprint ? this.sprintingSpeed : this.speed
         break
     }
-    console.log(this.direction)
   }
 }

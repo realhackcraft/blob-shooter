@@ -1,50 +1,3 @@
-// init DOM elements
-
-const canvas = document.getElementById('canvas')
-const ctx = canvas.getContext('2d')
-const startGameBtn = document.getElementById('start')
-const menu = document.getElementById('menu')
-const scoreEl = document.getElementById('score')
-const endScore = document.getElementById('bigScore')
-const endHighScore = document.getElementById('highScore')
-
-canvas.width = innerWidth
-canvas.height = innerHeight
-
-// Define commonly used value
-let canvasCenter = {
-  x: canvas.width / 2,
-  y: canvas.height / 2,
-}
-
-// Define vars and constants
-let score = 0
-let highScore = localStorage.getItem('highScore') === null
-  ? localStorage.setItem('highScore', score.toString())
-  : localStorage.getItem('highScore')
-endHighScore.innerHTML = highScore
-let animationID
-let enemies = []
-let particles = []
-let projectiles = []
-let powerUps = []
-let start = false
-let mouseX
-let mouseY
-let mouseDown
-let projectileSize = 5
-const FPS = 60
-const friction = 0.95
-const maxEnemySize = 30
-const minEnemySize = 5
-const randomPos = {
-  x: Math.random() * canvasCenter.x,
-  y: Math.random() * canvasCenter.y,
-}
-const player = new Player(canvasCenter.x, canvasCenter.y, 10, 10, 'white')
-
-let enemyInterval, powerUpInterval
-
 function init () {
   score = 0
   scoreEl.innerHTML = score
@@ -72,7 +25,8 @@ function spawnEnemies () {
     }
     const colour = `hsl(${Math.random() * 360}, 50%, 50%)`
     enemies.push(new Enemy(pos.x, pos.y, radius, colour, velocity))
-  }, Math.random() * (1500 - 700) + 700)
+  }, Math.random() * (2000 - (score / 4 <= 1000 ? score / 4 : 1000) - 700) +
+                                700)
 }
 
 function spawnPowerUps () {
@@ -108,35 +62,82 @@ function resetHighScore () {
   }
 }
 
+function createScoreLabel (score) {
+  const scoreLabel = document.createElement('label')
+  scoreLabel.innerHTML = score
+  scoreLabel.style.color = 'white'
+  scoreLabel.style.position = 'absolute'
+  scoreLabel.style.userSelect = 'none'
+  document.body.appendChild(scoreLabel)
+  scoreLabel.style.left = player.x - scoreLabel.offsetWidth / 2 +
+    randomNumber(-5, 5) + 'px'
+  scoreLabel.style.top = player.y - scoreLabel.offsetHeight / 2 -
+    player.radius - 10 + randomNumber(-5, 5) + 'px'
+
+  gsap.to(scoreLabel, {
+    opacity: 0,
+    y: -30,
+    duration: 0.75,
+    onComplete: () => scoreLabel.parentNode.removeChild(scoreLabel),
+  })
+}
+
+function reset () {
+  start = false
+  clearInterval(animationID)
+  endScore.innerHTML = score.toString()
+  endHighScore.innerHTML = highScore
+  menu.style.display = 'flex'
+  gsap.fromTo(
+    '#menu',
+    {
+      opacity: 0,
+      scale: 0.7,
+    },
+    {
+      opacity: 1,
+      scale: 1,
+      duration: 0.4,
+      ease: 'expo',
+    },
+  )
+  startGameBtn.innerHTML = 'Restart'
+  addEventListener('keydown', startGameBind)
+}
+
+function SpawnParticles (x, y, color, radius, count, velocity = { max, min }) {
+  for (let i = 0; i < count; i++) {
+    particles.push(
+      new Particle(
+        x,
+        y,
+        radius,
+        color,
+        {
+          x: randomNumber(velocity.min, velocity.max),
+          y: randomNumber(velocity.min, velocity.max),
+        },
+      ),
+    )
+  }
+}
+
 function animate () {
   ctx.fillStyle = 'rgba(0, 0, 0, 0.1)'
   ctx.fillRect(0, 0, canvas.width, canvas.height)
 
   player.update()
 
-  powerUps.forEach((powerUp, pIndex) => {
+  powerUps.forEach((powerUp, powerUpIndex) => {
     powerUp.update()
 
-    // Remove off-screen powerUps
-    if (
-      powerUp.x + powerUp.radius < 0 ||
-      powerUp.x - powerUp.radius > canvas.width ||
-      powerUp.y + powerUp.radius < 0 ||
-      powerUp.y - powerUp.radius > canvas.height
-    ) {
-      setTimeout(() => {
-        powerUps.splice(pIndex, 1)
-      }, 0)
-    }
+    removeEntityIfOffscreen(powerUp, powerUpIndex, powerUps)
 
-    const dist = Math.hypot(
-      player.x - powerUp.x,
-      player.y - powerUp.y,
-    )
+    const dist = distance(player, powerUp)
 
     // Gain powerUp
     if (dist < powerUp.image.height / 2 + player.radius) {
-      powerUps.splice(pIndex, 1)
+      powerUps.splice(powerUpIndex, 1)
       player.powerUp = 'machine gun'
       player.colour = 'gold'
       setTimeout(() => {
@@ -145,16 +146,7 @@ function animate () {
       }, 20000)
     }
   })
-
-  // Machine gun implementation
-  if (player.powerUp === 'machine gun') {
-    if (player.shootingCooldown <= 0) {
-      if (mouseDown) {
-        shootMachineGun()
-        player.shootingCooldown = 4
-      }
-    }
-  }
+  shootMachineGun()
 
   ctx.arc(this.x, this.y, this.radius, 0, Math.PI * 2, false)
   particles.forEach((particle, index) => {
@@ -183,110 +175,79 @@ function animate () {
     }
   })
 
-  enemies.forEach((enemy, eIndex) => {
+  enemies.forEach((enemy, enemyIndex) => {
     enemy.update()
 
-    const dist = Math.hypot(player.x - enemy.x, player.y - enemy.y)
+    const dist = distance(player, enemy)
 
     // Dead, end the game
     if (dist - enemy.radius - player.radius < 1) {
-      start = false
-      clearInterval(animationID)
-      endScore.innerHTML = score
-      endHighScore.innerHTML = highScore
-      menu.style.display = 'flex'
-      gsap.fromTo(
-        '#menu',
-        {
-          opacity: 0,
-          scale: 0.7,
-        },
-        {
-          opacity: 1,
-          scale: 1,
-          duration: 0.4,
-          ease: 'expo',
-        },
-      )
-      startGameBtn.innerHTML = 'Restart'
-      addEventListener('keydown', startGameBind)
+      reset()
     }
 
-    // Remove off-screen enemies
-    if (
-      enemy.x + enemy.radius < 0 ||
-      enemy.x - enemy.radius > canvas.width ||
-      enemy.y + enemy.radius < 0 ||
-      enemy.y - enemy.radius > canvas.height
-    ) {
-      setTimeout(() => {
-        enemies.splice(eIndex, 1)
-      }, 0)
-    }
+    removeEntityIfOffscreen(enemy, enemyIndex, enemies)
 
-    projectiles.forEach((projectile, playerIndex) => {
+    projectiles.forEach((projectile, projectileIndex) => {
       const dist = Math.hypot(projectile.x - enemy.x, projectile.y - enemy.y)
       // Enemy damaged
 
       if (dist - enemy.radius - projectile.radius < 1) {
-        // Spawn particles for enemy
 
-        for (let i = 0; i < enemy.radius * 3; i++) {
-          particles.push(
-            new Particle(
-              enemy.x,
-              enemy.y,
-              Math.random() * 3,
-              enemy.colour,
-              {
-                x: (Math.random() - 0.5) * (Math.random() * 7),
-                y: (Math.random() - 0.5) * (Math.random() * 7),
-              },
-            ),
-          )
-        }
+        SpawnParticles(enemy.x, enemy.y, enemy.colour,
+                       randomNumber(1, 3), enemy.radius, {
+                         max: 4,
+                         min: -4,
+                       })
 
-        // Spawn particles for projectile
-
-        for (let i = 0; i < projectileSize * 2; i++) {
-          particles.push(
-            new Particle(
-              projectile.x,
-              projectile.y,
-              Math.random() * 3,
-              projectile.colour,
-              {
-                x: (Math.random() - 0.5) * (Math.random() * 5),
-                y: (Math.random() - 0.5) * (Math.random() * 5),
-              },
-            ),
-          )
-        }
+        SpawnParticles(projectile.x, projectile.y, projectile.colour,
+                       randomNumber(1, 4), projectileSize * 2, {
+                         max: 3,
+                         min: -3,
+                       })
         // add to score
-
-        score += Math.ceil(enemy.radius / 5)
+        const newScore = Math.ceil(enemy.radius / 5)
         if (score > localStorage.getItem('highScore')) {
-          localStorage.setItem('highScore', score)
+          localStorage.setItem('highScore', score.toString())
           highScore = score
         }
-        scoreEl.innerHTML = score
 
         if (enemy.radius - player.damage > player.damage) {
-          gsap.to(enemy, { radius: enemy.radius - player.damage })
-          projectiles.splice(playerIndex, 1)
+          damageEnemy(enemy, projectile, projectileIndex, newScore)
         } else {
-          // Enemy dead
-
-          setTimeout(() => {
-            enemies.splice(eIndex, 1)
-            projectiles.splice(playerIndex, 1)
-          }, 0)
-
-          scoreEl.innerHTML = score
+          killEnemy(enemyIndex, projectileIndex, projectile, newScore + 20)
         }
+        scoreEl.innerHTML = score.toString()
       }
     })
   })
+}
+
+function removeEntityIfOffscreen (entity, index, entityArray) {
+  if (
+    entity.x + entity.radius < 0 ||
+    entity.x - entity.radius > canvas.width ||
+    entity.y + entity.radius < 0 ||
+    entity.y - entity.radius > canvas.height
+  ) {
+    setTimeout(() => {
+      entityArray.splice(index, 1)
+    }, 0)
+  }
+}
+
+function killEnemy (enemyIndex, projectileIndex, projectile, newScore) {
+  createScoreLabel(newScore)
+  enemies.splice(enemyIndex, 1)
+  projectiles.splice(projectileIndex, 1)
+  score += newScore
+  killCount++
+}
+
+function damageEnemy (enemy, projectile, projectileIndex, newScore) {
+  createScoreLabel(newScore)
+  gsap.to(enemy, { radius: enemy.radius - player.damage })
+  projectiles.splice(projectileIndex, 1)
+  score += newScore
 }
 
 function shoot (x, y) {
@@ -308,19 +269,21 @@ function shoot (x, y) {
 }
 
 function shootMachineGun () {
-  if (start) {
-    if (projectiles.length <= 700) {
-      const angle = Math.atan2(
-        mouseY - player.y,
-        mouseX - player.x,
-      )
-      const velocity = {
-        x: Math.cos(angle) * 5,
-        y: Math.sin(angle) * 5,
-      }
+  if (!start) return
+  if (player.powerUp !== 'machine gun') return
+  if (!projectiles.length <= 700) return
+  if (!player.shootingCooldown <= 0) return
+  if (!mouseDown) return
 
-      projectiles.push(
-        new Projectile(player.x, player.y, projectileSize, 'yellow', velocity))
-    }
+  const angle = angleBetween({ x: mouse.x, y: mouse.y }, player)
+  const velocity = {
+    x: Math.cos(angle) * 5,
+    y: Math.sin(angle) * 5,
   }
+
+  projectiles.push(
+    new Projectile(player.x, player.y, projectileSize, 'yellow', velocity))
+
+  player.shootingCooldown = 4
+
 }

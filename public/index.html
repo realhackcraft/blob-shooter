@@ -3,19 +3,21 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8" />
-  <meta http-equiv="X-UA-Compatible" content="IE=edge" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta content="IE=edge" http-equiv="X-UA-Compatible" />
+  <meta content="width=device-width, initial-scale=1.0" name="viewport" />
   <title>Blob Shooter</title>
   <script src="GSAP/gsap.min.js"></script>
   <script src="GSAP/CustomEase.min.js"></script>
+  <script src="scripts/helper.js"></script>
   <script src="scripts/classes/Enemy.js"></script>
   <script src="scripts/classes/Particle.js"></script>
   <script src="scripts/classes/Player.js"></script>
   <script src="scripts/classes/PowerUp.js"></script>
   <script src="scripts/classes/Projectile.js"></script>
-  <script src="scripts/main.js" defer></script>
-  <script src="scripts/eventListeners.js" defer></script>
-  <link rel="stylesheet" href="style.css" />
+  <script defer src="scripts/variables.js"></script>
+  <script defer src="scripts/main.js"></script>
+  <script defer src="scripts/eventListeners.js"></script>
+  <link href="style.css" rel="stylesheet" />
 </head>
 
 <body>
@@ -34,6 +36,6 @@
     </div>
   </div>
 </div>
-<canvas id="canvas" width="500" height="500"></canvas>
+<canvas height="500" id="canvas" width="500"></canvas>
 </body>
 </html>
