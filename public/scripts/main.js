@@ -219,13 +219,13 @@ function animate () {
 
       if (dist - enemy.radius - projectile.radius < 1) {
 
-        SpawnParticles(enemy.x, enemy.y, enemy.colour,
+        SpawnParticles(enemy.x, enemy.y, enemy.color,
                        randomNumber(1, 3), enemy.radius, {
                          max: 4,
                          min: -4,
                        })
 
-        SpawnParticles(projectile.x, projectile.y, projectile.colour,
+        SpawnParticles(projectile.x, projectile.y, projectile.color,
                        randomNumber(1, 4), projectileSize * 2, {
                          max: 3,
                          min: -3,
