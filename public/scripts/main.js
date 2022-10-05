@@ -65,7 +65,8 @@ function spawnBackgroundParticles () {
     y += bpDensity) {
     for (let x = 0; x < canvas.width + bpDensity;
       x += bpDensity) {
-      backgroundParticles.push(new BackgroundParticle(x, y, 3, 'blue'))
+      backgroundParticles.push(
+        new BackgroundParticle(x, y, 3, startingBackgroundColor))
     }
   }
 }
@@ -175,13 +176,14 @@ function animate () {
     if (dist < powerUp.image.height / 2 + player.radius) {
       powerUps.splice(powerUpIndex, 1)
       player.powerUp = 'machine gun'
-      player.colour = 'gold'
+      player.color = 'gold'
       setTimeout(() => {
         player.powerUp = ''
-        player.colour = 'white'
+        player.color = 'white'
       }, 20000)
     }
   })
+
   shootMachineGun()
 
   ctx.arc(this.x, this.y, this.radius, 0, Math.PI * 2, false)
@@ -305,8 +307,8 @@ function shoot (x, y) {
 function shootMachineGun () {
   if (!start) return
   if (player.powerUp !== 'machine gun') return
-  if (!projectiles.length <= 700) return
-  if (!player.shootingCooldown <= 0) return
+  if (projectiles.length >= 700) return
+  if (player.shootingCooldown >= 0) return
   if (!mouseDown) return
 
   const angle = angleBetween({ x: mouse.x, y: mouse.y }, player)
