@@ -134,6 +134,13 @@ function reset () {
   addEventListener('keydown', startGameBind)
 }
 
+function updateHighScore () {
+  if (score > localStorage.getItem('highScore')) {
+    localStorage.setItem('highScore', score.toString())
+    highScore = score
+  }
+}
+
 function animate () {
   ctx.fillStyle = backgroundColor
   ctx.fillRect(0, 0, canvas.width, canvas.height)
@@ -209,6 +216,7 @@ function animate () {
 
     // Dead, end the game
     if (dist - enemy.radius - player.radius < 1) {
+      updateHighScore()
       reset()
     }
 
@@ -233,10 +241,7 @@ function animate () {
                        })
         // add to score
         const newScore = Math.ceil(enemy.radius / 5)
-        if (score > localStorage.getItem('highScore')) {
-          localStorage.setItem('highScore', score.toString())
-          highScore = score
-        }
+        updateHighScore()
 
         if (enemy.radius - player.damage > player.damage) {
           damageEnemy(enemy, projectile, projectileIndex, newScore)
