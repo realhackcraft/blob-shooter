@@ -1,11 +1,11 @@
 * {
-    font-family: system-ui;
+    font-family: Arial, sans-serif;
+    cursor: url('./res/img/cursor.png'), auto;
 }
 
 body {
     margin: 0;
     overflow: hidden;
-    cursor: url('./res/img/cursor.png'), auto;
 }
 
 canvas {
