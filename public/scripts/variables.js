@@ -16,6 +16,32 @@ let canvasCenter = {
   x: canvas.width / 2,
   y: canvas.height / 2,
 }
+let sfx = {
+  shoot: new Howl({
+                    src: './res/aud/laserShoot.wav',
+                    volume: 0.1,
+                  }),
+  damageEnemy: new Howl({
+                          src: './res/aud/hitHurt.wav',
+                          volume: 0.1,
+                        }),
+  killEnemy: new Howl({
+                        src: './res/aud/explosion.wav',
+                        volume: 0.1,
+                      }),
+  powerUp: new Howl({
+                      src: './res/aud/powerUp.wav',
+                      volume: 0.1,
+                    }),
+  death: new Howl({
+                    src: './res/aud/death.wav',
+                    volume: 0.1,
+                  }),
+  click: new Howl({
+                    src: './res/aud/click.wav',
+                    volume: 0.1,
+                  }),
+}
 
 // Define vars and constants
 let score = 0
@@ -27,12 +53,11 @@ let animationID
 let backgroundParticles = []
 let enemies = []
 let particles = []
-let projectiles = []
 let powerUps = []
 let start = false
 let mouse = { x: 0, y: 0 }
 let mouseDown
-let projectileSize = 5
+
 const startingBackgroundColor = randomEnemyColor()
 const bpDensity = 30
 const backgroundColor = 'rgba(0, 0, 0, 0.1)'

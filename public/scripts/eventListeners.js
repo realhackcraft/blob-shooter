@@ -2,7 +2,7 @@
 addEventListener('click', (event) => {
   if (player.powerUp !== 'machine gun') {
     if (player.shootingCooldown <= 0) {
-      shoot(event.clientX, event.clientY)
+      player.shoot(event.clientX, event.clientY)
       player.shootingCooldown = 6
     }
   }
@@ -11,6 +11,7 @@ addEventListener('click', (event) => {
 // start game button actions and animations
 
 function startGame () {
+  sfx.click.play()
   setTimeout(() => {
     init()
     animationID = setInterval(animate, 1000 / FPS)
@@ -42,6 +43,7 @@ startGameBtn.addEventListener('click', startGame)
 addEventListener('keydown', startGameBind)
 
 addEventListener('keydown', (e) => {
+  if (!start) return
   switch (e.code) {
     case 'KeyW':
     case 'ArrowUp':
@@ -63,6 +65,7 @@ addEventListener('keydown', (e) => {
 })
 
 addEventListener('keydown', (e) => {
+  if (!start) return
   switch (e.code) {
     case 'Space':
       player.sprint = true

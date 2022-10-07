@@ -5,7 +5,7 @@ function init () {
   enemies = []
   particles = []
   powerUps = []
-  projectiles = []
+  player.projectiles = []
   start = true
   player.x = canvasCenter.x
   player.velocity.x = 0
@@ -43,7 +43,7 @@ function spawnPowerUps () {
   }, randomNumber(40000, 60000))
 }
 
-function SpawnParticles (x, y, color, radius, count, velocity = { max, min }) {
+function spawnParticles (x, y, color, radius, count, velocity = { max, min }) {
   for (let i = 0; i < count; i++) {
     particles.push(
       new Particle(
@@ -113,7 +113,6 @@ function createScoreLabel (score) {
 }
 
 function reset () {
-  start = false
   clearInterval(animationID)
   endScore.innerHTML = score.toString()
   endHighScore.innerHTML = highScore
@@ -140,6 +139,16 @@ function updateHighScore () {
     localStorage.setItem('highScore', score.toString())
     highScore = score
   }
+}
+
+function pickupPowerUp (powerUpIndex) {
+  powerUps.splice(powerUpIndex, 1)
+  player.powerUp = 'machine gun'
+  setTimeout(() => {
+    player.powerUp = ''
+    player.color = 'white'
+  }, 20000)
+  sfx.powerUp.play()
 }
 
 function animate () {
@@ -174,13 +183,7 @@ function animate () {
 
     // Gain powerUp
     if (dist < powerUp.image.height / 2 + player.radius) {
-      powerUps.splice(powerUpIndex, 1)
-      player.powerUp = 'machine gun'
-      player.color = 'gold'
-      setTimeout(() => {
-        player.powerUp = ''
-        player.color = 'white'
-      }, 20000)
+      pickupPowerUp(powerUpIndex)
     }
   })
 
@@ -197,7 +200,7 @@ function animate () {
     }
   })
 
-  projectiles.forEach((projectile, pIndex) => {
+  player.projectiles.forEach((projectile, pIndex) => {
     projectile.update()
 
     // Remove off-screen projectiles
@@ -206,7 +209,7 @@ function animate () {
                   projectile.radius)
     ) {
       setTimeout(() => {
-        projectiles.splice(pIndex, 1)
+        player.projectiles.splice(pIndex, 1)
       }, 0)
     }
   })
@@ -218,28 +221,27 @@ function animate () {
 
     // Dead, end the game
     if (dist - enemy.radius - player.radius < 1) {
-      updateHighScore()
-      reset()
+      gameOver()
     }
 
     removeEntityIfOffscreen(enemy.center, enemyIndex, enemies)
 
-    projectiles.forEach((projectile, projectileIndex) => {
+    player.projectiles.forEach((projectile, projectileIndex) => {
       const dist = Math.hypot(projectile.x - enemy.x, projectile.y - enemy.y)
       // Enemy damaged
 
       if (dist - enemy.radius - projectile.radius < 1) {
 
-        SpawnParticles(enemy.x, enemy.y, enemy.color,
+        spawnParticles(enemy.x, enemy.y, enemy.color,
                        randomNumber(1, 3), enemy.radius, {
-                         max: 4,
-                         min: -4,
+                         max: 7,
+                         min: -7,
                        })
 
-        SpawnParticles(projectile.x, projectile.y, projectile.color,
-                       randomNumber(1, 4), projectileSize * 2, {
-                         max: 3,
-                         min: -3,
+        spawnParticles(projectile.x, projectile.y, projectile.color,
+                       randomNumber(1, 4), player.projectileSize * 2, {
+                         max: 5,
+                         min: -5,
                        })
         // add to score
         const newScore = Math.ceil(enemy.radius / 5)
@@ -274,51 +276,26 @@ function killEnemy (enemyIndex, projectileIndex, enemy, projectile, newScore) {
   createScoreLabel(newScore)
   changeBPColor(enemy.color)
   enemies.splice(enemyIndex, 1)
-  projectiles.splice(projectileIndex, 1)
+  player.projectiles.splice(projectileIndex, 1)
   score += newScore
   killCount++
+  sfx.killEnemy.play()
 }
 
 function damageEnemy (enemy, projectile, projectileIndex, newScore) {
   createScoreLabel(newScore)
   gsap.to(enemy, { radius: enemy.radius - player.damage })
-  projectiles.splice(projectileIndex, 1)
+  player.projectiles.splice(projectileIndex, 1)
   score += newScore
-}
-
-function shoot (x, y) {
-  if (start) {
-    if (projectiles.length <= 700) {
-      const angle = Math.atan2(
-        y - player.y,
-        x - player.x,
-      )
-      const velocity = {
-        x: Math.cos(angle) * 5,
-        y: Math.sin(angle) * 5,
-      }
-
-      projectiles.push(
-        new Projectile(player.x, player.y, projectileSize, 'white', velocity))
-    }
-  }
+  sfx.damageEnemy.play()
 }
 
 function shootMachineGun () {
-  if (!start) return
   if (player.powerUp !== 'machine gun') return
-  if (projectiles.length >= 700) return
   if (player.shootingCooldown >= 0) return
   if (!mouseDown) return
 
-  const angle = angleBetween({ x: mouse.x, y: mouse.y }, player)
-  const velocity = {
-    x: Math.cos(angle) * 5,
-    y: Math.sin(angle) * 5,
-  }
-
-  projectiles.push(
-    new Projectile(player.x, player.y, projectileSize, 'yellow', velocity))
+  player.shoot(mouse.x, mouse.y)
 
   player.shootingCooldown = 4
 
@@ -336,4 +313,11 @@ function changeBPColor (color) {
       alpha: 0.1,
     })
   })
+}
+
+function gameOver () {
+  start = false
+  updateHighScore()
+  sfx.death.play()
+  reset()
 }

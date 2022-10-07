@@ -6,7 +6,7 @@ class Player extends Entity {
     this.sprint = false
     this.shootingCooldown = 10
     this.powerUp = ''
-    this.damage = projectileSize * 2
+    this.damage = this.projectileSize * 2
     this.direction = {
       x: 'none',
       y: 'none',
@@ -15,6 +15,9 @@ class Player extends Entity {
       x: 0,
       y: 0,
     }
+    this.projectiles = []
+    this.projectileColor = 'white'
+    this.projectileSize = 5
   }
 
   update () {
@@ -45,6 +48,7 @@ class Player extends Entity {
     this.velocity.y *= friction
 
     this.move()
+    this.changeColor()
   }
 
   move () {
@@ -64,5 +68,29 @@ class Player extends Entity {
         this.velocity.x += this.sprint ? this.sprintingSpeed : this.speed
         break
     }
+  }
+
+  changeColor () {
+    this.color = 'white'
+    this.projectileColor = 'white'
+    if (this.powerUp === 'machine gun') {
+      this.color = 'gold'
+      this.projectileColor = 'yellow'
+    }
+  }
+
+  shoot (x, y) {
+    if (!start) return
+    if (player.projectiles.length >= 700) return
+    const angle = angleBetween({ x, y }, this)
+    const velocity = {
+      x: Math.cos(angle) * 5,
+      y: Math.sin(angle) * 5,
+    }
+
+    player.projectiles.push(
+      new Projectile(this.x, this.y, this.projectileSize, this.projectileColor,
+                     velocity))
+    sfx.shoot.play()
   }
 }
