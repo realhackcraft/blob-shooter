@@ -1,6 +1,6 @@
 [package]
 name = "blob-shooter"
-version = "1.0.3"
+version = "1.0.4"
 description = "A game where you shoot blobs."
 authors = ["Hackcraft_"]
 license = ""
