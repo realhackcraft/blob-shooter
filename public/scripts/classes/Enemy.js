@@ -33,8 +33,6 @@ class Enemy extends Entity {
   }
 
   update () {
-    this.draw()
-
     if (this.type === 'Homing') {
       const angle = Math.atan2(player.y - this.y, player.x - this.x)
       this.velocity.x = Math.cos(angle)

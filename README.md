@@ -1,6 +1,6 @@
 # Blob-Shooter
 
-Blob Shooter is a third-person-shooter game where you shooter blobs.
+Blob Shooter is a third-person-shooter game where you shoot blobs.
 
 ## Controls
 

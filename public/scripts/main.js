@@ -1,3 +1,22 @@
+if (fancyCursor) {
+  let options = {
+    'cursorOuter': 'circle-basic',
+    'hoverEffect': 'circle-move',
+    'hoverItemMove': false,
+    'defaultCursor': false,
+    'outerWidth': 20,
+    'outerHeight': 20,
+  }
+  magicMouse(options)
+  startGameBtn.classList.add('magic-hover')
+  startGameBtn.classList.add('magic-hover__square')
+} else {
+  document.documentElement.style.cursor = 'url(\'./res/img/cursor.png\'), auto'
+  document.querySelector(
+    '.reset').style.cursor = 'url(\'./res/img/cursor.png\'), auto'
+  startGameBtn.style.cursor = 'url(\'./res/img/cursor.png\'), auto'
+}
+
 function init () {
   score = 0
   scoreEl.innerHTML = score
@@ -43,7 +62,8 @@ function spawnPowerUps () {
   }, randomNumber(40000, 60000))
 }
 
-function spawnParticles (x, y, color, radius, count, velocity = { max, min }) {
+function spawnParticles (
+  x, y, color, radius, count, velocity = { max: 1, min: -1 }) {
   for (let i = 0; i < count; i++) {
     particles.push(
       new Particle(
@@ -155,6 +175,95 @@ function animate () {
   ctx.fillStyle = backgroundColor
   ctx.fillRect(0, 0, canvas.width, canvas.height)
 
+  //update
+  player.draw()
+
+  enemies.forEach((enemy) => {
+    enemy.draw()
+  })
+
+  if (start) {
+    player.update()
+
+    shootMachineGun()
+
+    powerUps.forEach((powerUp, powerUpIndex) => {
+
+      powerUp.update()
+
+      removeEntityIfOffscreen(powerUp, powerUpIndex, powerUps)
+
+      const dist = distance(player, powerUp)
+
+      // Gain powerUp
+      if (dist < powerUp.image.height / 2 + player.radius) {
+        pickupPowerUp(powerUpIndex)
+      }
+    })
+
+    player.projectiles.forEach((projectile, pIndex) => {
+      projectile.update()
+
+      // Remove off-screen projectiles
+      if (
+        isOffscreen(projectile, projectile.radius,
+                    projectile.radius)
+      ) {
+        setTimeout(() => {
+          player.projectiles.splice(pIndex, 1)
+        }, 0)
+      }
+    })
+
+    enemies.forEach((enemy, enemyIndex) => {
+      enemy.update()
+
+      if (start) {
+
+        const dist = distance(player, enemy)
+
+        // Dead, end the game
+        if (dist - enemy.radius - player.radius < 1) {
+          gameOver()
+        }
+      }
+
+      removeEntityIfOffscreen(enemy.center, enemyIndex, enemies)
+
+      player.projectiles.forEach((projectile, projectileIndex) => {
+        const dist = Math.hypot(projectile.x - enemy.x, projectile.y - enemy.y)
+        // Enemy damaged
+
+        if (dist - enemy.radius - projectile.radius < 1) {
+
+          spawnParticles(enemy.x, enemy.y, enemy.color,
+                         randomNumber(2, 5), enemy.radius, {
+                           max: 7,
+                           min: -7,
+                         })
+
+          spawnParticles(projectile.x, projectile.y, projectile.color,
+                         randomNumber(2, 4), player.projectileSize * 2, {
+                           max: 3,
+                           min: -3,
+                         })
+          // add to score
+          const newScore = Math.ceil(enemy.radius / 5)
+          updateHighScore()
+
+          if (enemy.radius - player.damage > player.damage) {
+            damageEnemy(enemy, projectile, projectileIndex, newScore)
+          } else {
+            killEnemy(enemyIndex, projectileIndex, enemy, projectile,
+                      newScore + 20)
+          }
+          scoreEl.innerHTML = score.toString()
+        }
+      })
+    })
+
+  }
+
   backgroundParticles.forEach(backgroundParticle => {
     const dist = distance(player, backgroundParticle)
 
@@ -172,24 +281,7 @@ function animate () {
 
     backgroundParticle.draw()
   })
-  player.update()
 
-  powerUps.forEach((powerUp, powerUpIndex) => {
-    powerUp.update()
-
-    removeEntityIfOffscreen(powerUp, powerUpIndex, powerUps)
-
-    const dist = distance(player, powerUp)
-
-    // Gain powerUp
-    if (dist < powerUp.image.height / 2 + player.radius) {
-      pickupPowerUp(powerUpIndex)
-    }
-  })
-
-  shootMachineGun()
-
-  ctx.arc(this.x, this.y, this.radius, 0, Math.PI * 2, false)
   particles.forEach((particle, index) => {
     if (particle.alpha <= 0) {
       setTimeout(() => {
@@ -200,63 +292,6 @@ function animate () {
     }
   })
 
-  player.projectiles.forEach((projectile, pIndex) => {
-    projectile.update()
-
-    // Remove off-screen projectiles
-    if (
-      isOffscreen(projectile, projectile.radius,
-                  projectile.radius)
-    ) {
-      setTimeout(() => {
-        player.projectiles.splice(pIndex, 1)
-      }, 0)
-    }
-  })
-
-  enemies.forEach((enemy, enemyIndex) => {
-    enemy.update()
-
-    const dist = distance(player, enemy)
-
-    // Dead, end the game
-    if (dist - enemy.radius - player.radius < 1) {
-      gameOver()
-    }
-
-    removeEntityIfOffscreen(enemy.center, enemyIndex, enemies)
-
-    player.projectiles.forEach((projectile, projectileIndex) => {
-      const dist = Math.hypot(projectile.x - enemy.x, projectile.y - enemy.y)
-      // Enemy damaged
-
-      if (dist - enemy.radius - projectile.radius < 1) {
-
-        spawnParticles(enemy.x, enemy.y, enemy.color,
-                       randomNumber(1, 3), enemy.radius, {
-                         max: 7,
-                         min: -7,
-                       })
-
-        spawnParticles(projectile.x, projectile.y, projectile.color,
-                       randomNumber(1, 4), player.projectileSize * 2, {
-                         max: 5,
-                         min: -5,
-                       })
-        // add to score
-        const newScore = Math.ceil(enemy.radius / 5)
-        updateHighScore()
-
-        if (enemy.radius - player.damage > player.damage) {
-          damageEnemy(enemy, projectile, projectileIndex, newScore)
-        } else {
-          killEnemy(enemyIndex, projectileIndex, enemy, projectile,
-                    newScore + 20)
-        }
-        scoreEl.innerHTML = score.toString()
-      }
-    })
-  })
 }
 
 function removeEntityIfOffscreen (entity, index, entityArray) {
@@ -319,5 +354,14 @@ function gameOver () {
   start = false
   updateHighScore()
   sfx.death.play()
-  reset()
+  spawnParticles(player.x - player.velocity.x, player.y + player.velocity.y,
+                 player.color,
+                 randomNumber(player.radius / 3, player.radius / 2),
+                 randomNumber(player.radius * 2, player.radius * 2), {
+                   max: 4,
+                   min: -4,
+                 })
+  setTimeout(() => {
+    reset()
+  }, 1500)
 }

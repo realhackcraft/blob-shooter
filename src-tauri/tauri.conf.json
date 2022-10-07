@@ -1,5 +1,5 @@
 {
-  "$schema": "../../../node_modules/@tauri-apps/cli/schema.json",
+  "$schema": "/node_modules/@tauri-apps/cli/schema.json",
   "build": {
     "beforeBuildCommand": "",
     "beforeDevCommand": "kill -9 $(lsof -i :3003 -t) &>/dev/null || true && http-server -p 42069",

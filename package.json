@@ -19,5 +19,8 @@
   "bugs": {
     "url": "https://github.com/realhackcraft/Blob-Shooter/issues"
   },
-  "homepage": "https://github.com/realhackcraft/Blob-Shooter#readme"
+  "homepage": "https://github.com/realhackcraft/Blob-Shooter#readme",
+  "dependencies": {
+    "@tauri-apps/cli": "^1.1.1"
+  }
 }

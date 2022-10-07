@@ -6,7 +6,6 @@ class Player extends Entity {
     this.sprint = false
     this.shootingCooldown = 10
     this.powerUp = ''
-    this.damage = this.projectileSize * 2
     this.direction = {
       x: 'none',
       y: 'none',
@@ -18,10 +17,10 @@ class Player extends Entity {
     this.projectiles = []
     this.projectileColor = 'white'
     this.projectileSize = 5
+    this.damage = this.projectileSize * 2
   }
 
   update () {
-    this.draw()
     this.shootingCooldown--
 
     // x boundary

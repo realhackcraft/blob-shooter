@@ -7,10 +7,12 @@
   <meta content="width=device-width, initial-scale=1.0" name="viewport" />
   <title>Blob Shooter</title>
   <!-- Libraries -->
-  <script src="GSAP/gsap.min.js"></script>
-  <script src="GSAP/CustomEase.min.js"></script>
+  <script src="libraries/magicMouse/magic_mouse.js"></script>
+  <script src="libraries/GSAP/gsap.min.js"></script>
+  <script src="libraries/GSAP/CustomEase.min.js"></script>
+  <script src="libraries/howler/howler.min.js"></script>
   <script src="scripts/helper.js"></script>
-  <script src="howler.js-2.2.3/dist/howler.core.min.js"></script>
+
 
   <!-- Classes -->
   <script src="scripts/classes/Entity.js"></script>
@@ -24,10 +26,13 @@
   <script defer src="scripts/variables.js"></script>
   <script defer src="scripts/main.js"></script>
   <script defer src="scripts/eventListeners.js"></script>
+
+  <!-- Stylesheets -->
   <link href="style.css" rel="stylesheet" />
+  <link href="libraries/magicMouse/magic-mouse.css" rel="stylesheet">
 </head>
 
-<body>
+<body id="body">
 <div class="scoreboard">
   <p>Score: <span id="score">0</span></p>
 </div>
@@ -37,7 +42,7 @@
     <h1 id="bigScore">0</h1>
     <p class="label">Points</p>
     <h1 id="highScore">0</h1>
-    <p class="label">Highest Score <a href="javascript:resetHighScore()">Reset</a></p>
+    <p class="label">Highest Score <a class="reset" href="javascript:resetHighScore()">Reset</a></p>
     <div>
       <button id="start">Start Game</button>
     </div>
