@@ -3,3 +3,4 @@
 /src-tauri/target/
 package-lock.json
 /src-tauri/Cargo.lock
+/node_modules
