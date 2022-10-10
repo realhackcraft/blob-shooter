@@ -7,6 +7,7 @@ const menu = document.getElementById('menu')
 const scoreEl = document.getElementById('score')
 const endScore = document.getElementById('bigScore')
 const endHighScore = document.getElementById('highScore')
+const fpsDisplay = document.getElementById('fpsDisplay')
 
 canvas.width = innerWidth
 canvas.height = innerHeight
@@ -42,14 +43,17 @@ let sfx = {
                     volume: 0.1,
                   }),
 }
+let stats = {
+  killCount: initLocalStorageIfNull('killCount', 0),
+  projectileShot: initLocalStorageIfNull('projectileShot', 0),
+  damageDealt: initLocalStorageIfNull('damageDealt', 0),
+}
 
 // Define vars and constants
 let score = 0
-let highScore = localStorage.getItem('highScore') === null
-  ? localStorage.setItem('highScore', score.toString())
-  : localStorage.getItem('highScore')
+let highScore = initLocalStorageIfNull('highScore', 0)
 endHighScore.innerHTML = highScore
-let animationID
+
 let backgroundParticles = []
 let enemies = []
 let particles = []
@@ -58,23 +62,28 @@ let start = false
 let mouse = { x: 0, y: 0 }
 let mouseDown
 
+let animationID
+let lastTimestamp = 0
+let lastFpsUpdate = 0
+let FPS = 60
+let delta = 0
+let lastFrameTimeMs = 0
+let framesThisSecond = 0
+const timestep = Math.floor(1000 / FPS)
+
 const startingBackgroundColor = randomEnemyColor()
-const bpDensity = 30
+const bpDensity = 40
 const backgroundColor = 'rgba(0, 0, 0, 0.1)'
-const FPS = 60
 const friction = 0.95
 const maxEnemySize = 30
 const minEnemySize = 5
-const randomPos = {
+let randomPos = {
   x: Math.random() * canvasCenter.x,
   y: Math.random() * canvasCenter.y,
 }
-const player = new Player(canvasCenter.x, canvasCenter.y, 10, 10, 'white')
+const player = new Player(canvasCenter.x, canvasCenter.y, 0.01, 10, 'white')
 const fancyCursor = false
 
 const scoreLabelColor = 'white'
 
 let enemyInterval, powerUpInterval
-
-// Stats
-let killCount

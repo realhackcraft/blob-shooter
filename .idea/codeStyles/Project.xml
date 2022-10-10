@@ -21,9 +21,14 @@
       <option name="IMPORT_SORT_MODULE_NAME" value="true" />
     </JSCodeStyleSettings>
     <TypeScriptCodeStyleSettings version="0">
+      <option name="JSDOC_INCLUDE_TYPES" value="true" />
       <option name="FORCE_SEMICOLON_STYLE" value="true" />
       <option name="SPACE_BEFORE_FUNCTION_LEFT_PARENTH" value="false" />
+      <option name="PREFER_AS_TYPE_CAST" value="true" />
       <option name="FORCE_QUOTE_STYlE" value="true" />
+      <option name="PREFER_EXPLICIT_TYPES_VARS_FIELDS" value="true" />
+      <option name="PREFER_EXPLICIT_TYPES_FUNCTION_RETURNS" value="true" />
+      <option name="PREFER_EXPLICIT_TYPES_FUNCTION_EXPRESSION_RETURNS" value="true" />
       <option name="ENFORCE_TRAILING_COMMA" value="Remove" />
       <option name="SPACES_WITHIN_OBJECT_LITERAL_BRACES" value="true" />
       <option name="SPACES_WITHIN_IMPORTS" value="true" />
@@ -33,6 +38,7 @@
       <option name="INTERPOLATION_NEW_LINE_BEFORE_END_DELIMITER" value="false" />
     </VueCodeStyleSettings>
     <codeStyleSettings language="HTML">
+      <option name="BLOCK_COMMENT_ADD_SPACE" value="true" />
       <option name="SOFT_MARGINS" value="80" />
       <indentOptions>
         <option name="INDENT_SIZE" value="2" />
@@ -42,8 +48,6 @@
     </codeStyleSettings>
     <codeStyleSettings language="JavaScript">
       <option name="RIGHT_MARGIN" value="80" />
-      <option name="LINE_COMMENT_AT_FIRST_COLUMN" value="true" />
-      <option name="LINE_COMMENT_ADD_SPACE" value="false" />
       <option name="BLOCK_COMMENT_ADD_SPACE" value="true" />
       <option name="KEEP_BLANK_LINES_IN_CODE" value="1" />
       <option name="ALIGN_MULTILINE_CHAINED_METHODS" value="true" />
@@ -95,19 +99,58 @@
         </groups>
       </arrangement>
     </codeStyleSettings>
+    <codeStyleSettings language="Rust">
+      <option name="BLOCK_COMMENT_AT_FIRST_COLUMN" value="true" />
+    </codeStyleSettings>
+    <codeStyleSettings language="SCSS">
+      <arrangement>
+        <rules>
+          <section>
+            <rule>
+              <match>
+                <NAME>.*</NAME>
+              </match>
+              <order>BY_NAME</order>
+            </rule>
+          </section>
+        </rules>
+      </arrangement>
+    </codeStyleSettings>
     <codeStyleSettings language="TypeScript">
+      <option name="BLOCK_COMMENT_ADD_SPACE" value="true" />
       <option name="SOFT_MARGINS" value="80" />
       <indentOptions>
         <option name="INDENT_SIZE" value="2" />
         <option name="CONTINUATION_INDENT_SIZE" value="2" />
         <option name="TAB_SIZE" value="2" />
       </indentOptions>
+      <arrangement>
+        <groups>
+          <group>
+            <type>GROUP_PROPERTY_FIELD_WITH_GETTER_SETTER</type>
+            <order>KEEP</order>
+          </group>
+          <group>
+            <type>TREAT_LAMBDA_INITIALIZED_FIELDS_AS_METHODS</type>
+            <order>KEEP</order>
+          </group>
+          <group>
+            <type>OVERRIDDEN_METHODS</type>
+            <order>BY_NAME</order>
+          </group>
+        </groups>
+      </arrangement>
     </codeStyleSettings>
     <codeStyleSettings language="Vue">
       <option name="SOFT_MARGINS" value="80" />
       <indentOptions>
         <option name="CONTINUATION_INDENT_SIZE" value="2" />
       </indentOptions>
+    </codeStyleSettings>
+    <codeStyleSettings language="XML">
+      <option name="LINE_COMMENT_AT_FIRST_COLUMN" value="false" />
+      <option name="BLOCK_COMMENT_AT_FIRST_COLUMN" value="false" />
+      <option name="BLOCK_COMMENT_ADD_SPACE" value="true" />
     </codeStyleSettings>
   </code_scheme>
 </component>

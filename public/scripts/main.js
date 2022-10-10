@@ -1,21 +1,4 @@
-if (fancyCursor) {
-  let options = {
-    'cursorOuter': 'circle-basic',
-    'hoverEffect': 'circle-move',
-    'hoverItemMove': false,
-    'defaultCursor': false,
-    'outerWidth': 20,
-    'outerHeight': 20,
-  }
-  magicMouse(options)
-  startGameBtn.classList.add('magic-hover')
-  startGameBtn.classList.add('magic-hover__square')
-} else {
-  document.documentElement.style.cursor = 'url(\'./res/img/cursor.png\'), auto'
-  document.querySelector(
-    '.reset').style.cursor = 'url(\'./res/img/cursor.png\'), auto'
-  startGameBtn.style.cursor = 'url(\'./res/img/cursor.png\'), auto'
-}
+loadCursor()
 
 function init () {
   score = 0
@@ -44,21 +27,24 @@ function spawnEnemies () {
                                   x: Math.cos(angle),
                                   y: Math.sin(angle),
                                 }
-                                enemies.push(new Enemy(pos.x, pos.y, radius, randomEnemyColor(), velocity,
-                                                       randomNumber(0.5, 2)))
+                                enemies.push(new Enemy(pos.x, pos.y, radius,
+                                                       randomEnemyColor(),
+                                                       velocity,
+                                                       randomNumber(0.05, 0.1)))
                               }, randomNumber(2000 - (score / 4 <= 1000 ? score / 4 : 1000), 700),
   )
 }
 
 function spawnPowerUps () {
   powerUpInterval = setInterval(() => {
-    let pos = spawnOnEdge(16, 16) // Width and height of image
+    const pos = spawnOnEdge(16, 16) // Width and height of image
     const angle = angleBetween(randomPos, pos)
     const velocity = {
       x: Math.cos(angle),
       y: Math.sin(angle),
     }
-    powerUps.push(new PowerUp(pos.x, pos.y, velocity))
+    powerUps.push(
+      new PowerUp(pos.x, pos.y, velocity, randomNumber(0.05, 0.01)))
   }, randomNumber(40000, 60000))
 }
 
@@ -75,6 +61,7 @@ function spawnParticles (
           x: randomNumber(velocity.min, velocity.max),
           y: randomNumber(velocity.min, velocity.max),
         },
+        randomNumber(0.03, 0.05),
       ),
     )
   }
@@ -133,7 +120,7 @@ function createScoreLabel (score) {
 }
 
 function reset () {
-  clearInterval(animationID)
+  cancelAnimationFrame(animationID)
   endScore.innerHTML = score.toString()
   endHighScore.innerHTML = highScore
   menu.style.display = 'flex'
@@ -171,27 +158,81 @@ function pickupPowerUp (powerUpIndex) {
   sfx.powerUp.play()
 }
 
-function animate () {
+function panic () {
+  delta = 0
+}
+
+function animate (timestamp) {
+  if (timestamp - lastFrameTimeMs < timestep) {
+    animationID = requestAnimationFrame(animate)
+    return
+  }
+  console.log(delta)
+  delta += timestamp - lastFrameTimeMs
+  lastFrameTimeMs = timestamp
+
+  if (timestamp > lastFpsUpdate + 1000) {
+    FPS = 0.25 * framesThisSecond + 0.75 * FPS
+
+    lastFpsUpdate = timestamp
+    framesThisSecond = 0
+  }
+  framesThisSecond++
+
+  let numUpdateSteps = 0
+  while (delta >= timestep) {
+    update(timestep)
+    delta -= timestep
+    if (++numUpdateSteps >= 240) {
+      panic()
+      break
+    }
+  }
+
+  draw(delta / timestep)
+  animationID = requestAnimationFrame(animate)
+
+}
+
+function draw (interp) {
   ctx.fillStyle = backgroundColor
   ctx.fillRect(0, 0, canvas.width, canvas.height)
 
-  //update
-  player.draw()
-
+  player.draw(interp)
   enemies.forEach((enemy) => {
-    enemy.draw()
+    enemy.draw(interp)
   })
+  particles.forEach(particle => {
+    particle.draw(interp)
+  })
+  player.projectiles.forEach(projectile => {
+    projectile.draw(interp)
+  })
+  backgroundParticles.forEach(backgroundParticle => {
+    backgroundParticle.draw(interp)
+  })
+  powerUps.forEach(powerUp => {
+    powerUp.draw(interp)
+  })
+  fpsDisplay.innerHTML = Math.round(FPS).toString()
+}
 
+function update (delta) {
   if (start) {
-    player.update()
+    randomPos = {
+      x: Math.random() * canvasCenter.x,
+      y: Math.random() * canvasCenter.y,
+    }
 
-    shootMachineGun()
+    player.update(delta)
+
+    player.shootMachineGun()
 
     powerUps.forEach((powerUp, powerUpIndex) => {
 
-      powerUp.update()
-
       removeEntityIfOffscreen(powerUp, powerUpIndex, powerUps)
+
+      powerUp.update(delta)
 
       const dist = distance(player, powerUp)
 
@@ -202,21 +243,21 @@ function animate () {
     })
 
     player.projectiles.forEach((projectile, pIndex) => {
-      projectile.update()
-
       // Remove off-screen projectiles
       if (
-        isOffscreen(projectile, projectile.radius,
+        isOffScreen(projectile, projectile.radius,
                     projectile.radius)
       ) {
         setTimeout(() => {
           player.projectiles.splice(pIndex, 1)
         }, 0)
       }
+
+      projectile.update(delta)
     })
 
     enemies.forEach((enemy, enemyIndex) => {
-      enemy.update()
+      enemy.update(delta)
 
       if (start) {
 
@@ -231,7 +272,7 @@ function animate () {
       removeEntityIfOffscreen(enemy.center, enemyIndex, enemies)
 
       player.projectiles.forEach((projectile, projectileIndex) => {
-        const dist = Math.hypot(projectile.x - enemy.x, projectile.y - enemy.y)
+        const dist = distance(projectile, enemy)
         // Enemy damaged
 
         if (dist - enemy.radius - projectile.radius < 1) {
@@ -248,16 +289,17 @@ function animate () {
                            min: -3,
                          })
           // add to score
-          const newScore = Math.ceil(enemy.radius / 5)
           updateHighScore()
 
           if (enemy.radius - player.damage > player.damage) {
-            damageEnemy(enemy, projectile, projectileIndex, newScore)
+            damageEnemy(enemy, projectile, projectileIndex, player.damage)
           } else {
             killEnemy(enemyIndex, projectileIndex, enemy, projectile,
-                      newScore + 20)
+                      player.damage + 20)
           }
           scoreEl.innerHTML = score.toString()
+          stats.damageDealt = parseInt(stats.damageDealt) + player.damage
+          localStorage.setItem('damageDealt', stats.damageDealt)
         }
       })
     })
@@ -278,8 +320,6 @@ function animate () {
     } else if (backgroundParticle.alpha > 0.1) {
       backgroundParticle.alpha -= 0.01
     }
-
-    backgroundParticle.draw()
   })
 
   particles.forEach((particle, index) => {
@@ -288,10 +328,9 @@ function animate () {
         particles.splice(index, 1)
       }, 0)
     } else {
-      particle.update()
+      particle.update(delta)
     }
   })
-
 }
 
 function removeEntityIfOffscreen (entity, index, entityArray) {
@@ -313,7 +352,7 @@ function killEnemy (enemyIndex, projectileIndex, enemy, projectile, newScore) {
   enemies.splice(enemyIndex, 1)
   player.projectiles.splice(projectileIndex, 1)
   score += newScore
-  killCount++
+  stats.killCount++
   sfx.killEnemy.play()
 }
 
@@ -323,17 +362,6 @@ function damageEnemy (enemy, projectile, projectileIndex, newScore) {
   player.projectiles.splice(projectileIndex, 1)
   score += newScore
   sfx.damageEnemy.play()
-}
-
-function shootMachineGun () {
-  if (player.powerUp !== 'machine gun') return
-  if (player.shootingCooldown >= 0) return
-  if (!mouseDown) return
-
-  player.shoot(mouse.x, mouse.y)
-
-  player.shootingCooldown = 4
-
 }
 
 function changeBPColor (color) {

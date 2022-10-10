@@ -1,12 +1,15 @@
 class Projectile extends Entity {
-  constructor (x, y, radius, color, velocity) {
+  constructor (x, y, radius, color, velocity, speed) {
     super(x, y, radius, color, 1)
     this.velocity = velocity
+    this.speed = speed
   }
 
-  update () {
-    this.draw()
-    this.x += this.velocity.x
-    this.y += this.velocity.y
+  update (delta) {
+    this.lastPos.x = this.x
+    this.lastPos.y = this.y
+
+    this.x += this.velocity.x * this.speed * delta
+    this.y += this.velocity.y * this.speed * delta
   }
 }

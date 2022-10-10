@@ -14,7 +14,14 @@ function startGame () {
   sfx.click.play()
   setTimeout(() => {
     init()
-    animationID = setInterval(animate, 1000 / FPS)
+    draw(1)
+    animationID = requestAnimationFrame(function (timestamp) {
+      draw(1)
+      lastFrameTimeMs = timestamp
+      lastFpsUpdate = timestamp
+      framesThisSecond = 0
+      animationID = requestAnimationFrame(animate)
+    })
 
     spawnEnemies()
     spawnPowerUps()

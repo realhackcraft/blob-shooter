@@ -32,27 +32,30 @@ class Enemy extends Entity {
     }
   }
 
-  update () {
+  update (delta) {
+    this.lastPos.x = this.x
+    this.lastPos.y = this.y
+
     if (this.type === 'Homing') {
       const angle = Math.atan2(player.y - this.y, player.x - this.x)
       this.velocity.x = Math.cos(angle)
       this.velocity.y = Math.sin(angle)
 
-      this.x += this.velocity.x * this.speed
-      this.y += this.velocity.y * this.speed
+      this.x += this.velocity.x * this.speed * delta
+      this.y += this.velocity.y * this.speed * delta
 
       this.center.x = this.x
       this.center.y = this.y
 
     } else if (this.type === 'Hopping' || this.type === 'Drunk') {
-      this.radians += 0.1
+      this.radians += randomNumber(0.005, 0.01) * delta
       if (this.radians >= 2 * Math.PI) {
         this.radians = this.radians %
           (2 * Math.PI)
       }
 
-      this.center.x += this.velocity.x * this.speed
-      this.center.y += this.velocity.y * this.speed
+      this.center.x += this.velocity.x * this.speed * delta
+      this.center.y += this.velocity.y * this.speed * delta
 
       if (this.type === 'Drunk') {
         this.x = this.center.x + Math.cos(this.radians) * (15 + this.radius)
@@ -62,7 +65,7 @@ class Enemy extends Entity {
         this.y = this.center.y + Math.sin(this.radians) * (5 + this.radius)
       }
     } else if (this.type === 'Homing-Hopping') {
-      this.radians += 0.1
+      this.radians += randomNumber(0.005, 0.01) * delta
 
       // Overflow protection
       if (this.radians >= 2 * Math.PI) {
@@ -75,17 +78,17 @@ class Enemy extends Entity {
       this.velocity.x = Math.cos(angle)
       this.velocity.y = Math.sin(angle)
 
-      this.center.x += this.velocity.x * this.speed
-      this.center.y += this.velocity.y * this.speed
+      this.center.x += this.velocity.x * this.speed * delta
+      this.center.y += this.velocity.y * this.speed * delta
 
       this.x = this.center.x + Math.cos(this.radians) * 10
       this.y = this.center.y + Math.sin(this.radians) * 10
     } else {
-      this.x += this.velocity.x
-      this.y += this.velocity.y
+      this.x += this.velocity.x * this.speed * delta
+      this.y += this.velocity.y * this.speed * delta
 
-      this.center.x = this.x * this.speed
-      this.center.y = this.y * this.speed
+      this.center.x = this.x
+      this.center.y = this.y
     }
   }
 }
