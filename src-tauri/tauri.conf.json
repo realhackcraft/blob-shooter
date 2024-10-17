@@ -1,22 +1,20 @@
 {
-  "$schema": "/node_modules/@tauri-apps/cli/schema.json",
   "build": {
-    "beforeBuildCommand": "",
-    "beforeDevCommand": "kill -9 $(lsof -i :3003 -t) &>/dev/null || true && http-server -p 42069",
-    "devPath": "http://127.0.0.1:42069",
-    "distDir": "../public"
+    "devPath": "../public",
+    "distDir": "../public",
+    "withGlobalTauri": true
   },
   "package": {
-    "productName": "Blob Shooter",
+    "productName": "blob-shooter",
     "version": "1.0.4"
   },
   "tauri": {
     "allowlist": {
-      "all": true
+      "all": false
     },
     "bundle": {
       "active": true,
-      "category": "DeveloperTool",
+      "category": "Game",
       "copyright": "",
       "deb": {
         "depends": []
@@ -55,7 +53,7 @@
     },
     "windows": [
       {
-        "fullscreen": false,
+        "fullscreen": true,
         "height": 600,
         "resizable": true,
         "title": "Blob Shooter",
