@@ -65,7 +65,7 @@ let mouseDown;
 let animationID;
 let lastTimestamp = 0;
 let lastFpsUpdate = 0;
-let FPS = 60;
+let FPS = 120;
 let delta = 0;
 let lastFrameTimeMs = 0;
 let framesThisSecond = 0;
