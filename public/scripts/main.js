@@ -58,8 +58,7 @@ function spawnPowerUps() {
         new PowerUp(pos.x, pos.y, velocity, randomNumber(0.05, 0.01), "random"),
       );
     },
-    //randomNumber(40000, 60000),
-    randomNumber(1000, 1000),
+    randomNumber(15000, 35000),
   );
 }
 

@@ -88,7 +88,6 @@ let randomPos = {
   y: Math.random() * canvasCenter.y,
 };
 const player = new Player(canvasCenter.x, canvasCenter.y, 0.01, 10, "white");
-const fancyCursor = false;
 
 const scoreLabelColor = "white";
 
