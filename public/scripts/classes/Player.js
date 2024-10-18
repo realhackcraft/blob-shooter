@@ -28,8 +28,8 @@ class Player extends Entity {
 
 		// x boundary
 		if (
-			this.x + this.radius + this.velocity.x <= canvas.width &&
-			this.x - this.radius + this.velocity.x >= 0
+			this.x + this.radius + this.velocity.x * delta <= canvasEdges.right &&
+			this.x - this.radius + this.velocity.x * delta >= canvasEdges.left
 		) {
 			this.x += this.velocity.x * delta;
 		} else {
@@ -38,8 +38,8 @@ class Player extends Entity {
 
 		// y boundary
 		if (
-			this.y + this.radius + this.velocity.y <= canvas.height &&
-			this.y - this.radius + this.velocity.y >= 0
+			this.y + this.radius + this.velocity.y * delta <= canvasEdges.bottom &&
+			this.y - this.radius + this.velocity.y * delta >= canvasEdges.top
 		) {
 			this.y += this.velocity.y * delta;
 		} else {
