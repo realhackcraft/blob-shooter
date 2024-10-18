@@ -77,10 +77,10 @@ function angleBetween(a = { x, y }, b = { x, y }) {
  */
 function isOffScreen(pos = { x, y }, width, height) {
   return (
-    pos.x + width < 0 ||
-    pos.x - width > canvas.width ||
-    pos.y + height < 0 ||
-    pos.y - height > canvas.height
+    pos.x + width < canvasEdges.left ||
+    pos.x - width > canvasEdges.right ||
+    pos.y + height < canvasEdges.top ||
+    pos.y - height > canvasEdges.bottom
   );
 }
 

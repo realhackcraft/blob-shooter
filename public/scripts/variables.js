@@ -9,14 +9,31 @@ const endScore = document.getElementById("bigScore");
 const endHighScore = document.getElementById("highScore");
 const fpsDisplay = document.getElementById("fpsDisplay");
 
-canvas.width = innerWidth;
-canvas.height = innerHeight;
+if (window.devicePixelRatio > 1) {
+  var canvasWidth = innerWidth;
+  var canvasHeight = innerHeight;
+
+  canvas.width = canvasWidth * window.devicePixelRatio;
+  canvas.height = canvasHeight * window.devicePixelRatio;
+  canvas.style.width = canvasWidth + "px";
+  canvas.style.height = canvasHeight + "px";
+
+  ctx.scale(window.devicePixelRatio, window.devicePixelRatio);
+}
 
 // Define commonly used value
-let canvasCenter = {
-  x: canvas.width / 2,
-  y: canvas.height / 2,
+let canvasEdges = {
+  left: 0,
+  right: innerWidth,
+  top: 0,
+  bottom: innerHeight,
 };
+
+let canvasCenter = {
+  x: canvasEdges.right / 2,
+  y: canvasEdges.bottom / 2,
+};
+
 let sfx = {
   background: new Howl({
     src: "./assets/aud/MarchOfTheBlob.wav",
@@ -49,6 +66,7 @@ let sfx = {
     volume: 0.1,
   }),
 };
+
 let stats = {
   killCount: initLocalStorageIfNull("killCount", 0),
   projectileShot: initLocalStorageIfNull("projectileShot", 0),
@@ -77,6 +95,7 @@ let lastFrameTimeMs = 0;
 let framesThisSecond = 0;
 const timestep = Math.floor(1000 / FPS);
 
+const enableShaders = true;
 const startingBackgroundColor = randomEnemyColor();
 const bpDensity = 40;
 const backgroundColor = "rgba(0, 0, 0, 0.1)";

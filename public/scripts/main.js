@@ -88,8 +88,8 @@ function spawnParticles(
 }
 
 function spawnBackgroundParticles() {
-  for (let y = 0; y < canvas.height + bpDensity; y += bpDensity) {
-    for (let x = 0; x < canvas.width + bpDensity; x += bpDensity) {
+  for (let y = 0; y < canvasEdges.bottom + bpDensity; y += bpDensity) {
+    for (let x = 0; x < canvasEdges.right + bpDensity; x += bpDensity) {
       backgroundParticles.push(
         new BackgroundParticle(x, y, 3, startingBackgroundColor),
       );
@@ -100,11 +100,11 @@ function spawnBackgroundParticles() {
 function spawnOnEdge(width, height) {
   let x, y;
   if (Math.random() < 0.5) {
-    x = Math.random() < 0.5 ? 0 - width : canvas.width + width;
-    y = Math.random() * canvas.height;
+    x = Math.random() < 0.5 ? 0 - width : canvasEdges.right + width;
+    y = Math.random() * canvasEdges.bottom;
   } else {
-    x = Math.random() * canvas.width;
-    y = Math.random() < 0.5 ? 0 - height : canvas.height + height;
+    x = Math.random() * canvasEdges.right;
+    y = Math.random() < 0.5 ? 0 - height : canvasEdges.bottom + height;
   }
 
   return { x: x, y: y };
@@ -214,21 +214,30 @@ function animate(timestamp) {
 
   draw(delta / timestep);
 
-  updateTexture();
-  const time = performance.now() / 1000; // time in seconds
-  render(time);
+  if (enableShaders) {
+    updateTexture();
+    const time = performance.now() / 1000; // time in seconds
+    render(time);
+  }
 
   animationID = requestAnimationFrame(animate);
 }
 
 function draw(interp) {
   ctx.fillStyle = backgroundColor;
-  ctx.fillRect(0, 0, canvas.width, canvas.height);
+  ctx.fillRect(
+    canvasEdges.left,
+    canvasEdges.top,
+    canvasEdges.right,
+    canvasEdges.bottom,
+  );
 
   player.draw(interp);
+
   enemies.forEach((enemy) => {
     enemy.draw(interp);
   });
+
   particles.forEach((particle) => {
     particle.draw(interp);
   });
@@ -372,10 +381,10 @@ function update(delta) {
 
 function removeEntityIfOffscreen(entity, index, entityArray) {
   if (
-    entity.x + entity.radius < 0 ||
-    entity.x - entity.radius > canvas.width ||
-    entity.y + entity.radius < 0 ||
-    entity.y - entity.radius > canvas.height
+    entity.x + entity.radius < canvasEdges.left ||
+    entity.x - entity.radius > canvasEdges.right ||
+    entity.y + entity.radius < canvasEdges.top ||
+    entity.y - entity.radius > canvasEdges.bottom
   ) {
     setTimeout(() => {
       entityArray.splice(index, 1);
