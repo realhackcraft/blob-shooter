@@ -17,7 +17,10 @@ class Player extends Entity {
 		this.projectiles = [];
 		this.projectileColor = "white";
 		this.projectileSize = 5;
-		this.damage = randomInt(this.projectileSize, this.projectileSize * 1.5);
+		this.damage = randomInt(
+			this.projectileSize,
+			Math.pow(this.projectileSize, 1.2),
+		);
 	}
 
 	update(delta) {
