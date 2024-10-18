@@ -77,14 +77,21 @@ class Player extends Entity {
 		this.color = "white";
 		this.projectileColor = "white";
 		if (this.powerUp === "rapid_fire") {
-			this.color = "gold";
-			this.projectileColor = "yellow";
+			this.color = "#FFD43B";
+			this.projectileColor = "#FFD43B";
+		} else if (this.powerUp === "bullet_size") {
+			this.color = "#ff3b45";
+			this.projectileColor = "#ff3b45";
+		} else if (this.powerUp === "shoot_backwards") {
+			this.color = "#3b86ff";
+			this.projectileColor = "#3b86ff";
 		}
 	}
 
 	shoot(x, y) {
 		if (!start) return;
 		if (this.projectiles.length >= 700) return;
+
 		const angle = angleBetween({ x, y }, this);
 		const velocity = {
 			x: Math.cos(angle) * 5,
@@ -95,12 +102,34 @@ class Player extends Entity {
 			new Projectile(
 				this.x,
 				this.y,
-				this.projectileSize,
+				this.powerUp === "bullet_size"
+					? this.projectileSize * 1.5
+					: this.projectileSize,
 				this.projectileColor,
 				velocity,
 				randomNumber(0.03, 0.05),
 			),
 		);
+
+		if (this.powerUp === "shoot_backwards") {
+			const backVelocity = {
+				x: -Math.cos(angle) * 5,
+				y: -Math.sin(angle) * 5,
+			};
+			this.projectiles.push(
+				new Projectile(
+					this.x,
+					this.y,
+					this.powerUp === "bullet_size"
+						? this.projectileSize * 1.5
+						: this.projectileSize,
+					this.projectileColor,
+					backVelocity,
+					randomNumber(0.03, 0.05),
+				),
+			);
+		}
+
 		sfx.shoot.play();
 		stats.projectileShot++;
 		localStorage.setItem("projectileShot", stats.projectileShot);

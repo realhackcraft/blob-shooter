@@ -18,6 +18,12 @@ let canvasCenter = {
   y: canvas.height / 2,
 };
 let sfx = {
+  background: new Howl({
+    src: "./assets/aud/MarchOfTheBlob.wav",
+    volume: 0.4,
+    preload: true,
+    loop: true,
+  }),
   shoot: new Howl({
     src: "./assets/aud/laserShoot.wav",
     volume: 0.1,
