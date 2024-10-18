@@ -6,19 +6,15 @@ Blob Shooter is a third-person-shooter game where you shoot blobs.
 
 The controls are `w`, `a`, `s`, `d` or arrow keys.
 
-Additionally, you can sprint by holding down `space`
+Additionally, you can sprint by holding down `space`.
 
-## Important links
+Use your mouse to shoot colored blobs: if you touch them, you die!
 
-[Game](https://realhackcraft.github.io/Blob-Shooter)
+Powerups may appear once in a while, collect them to get temporary bonuses.
+
+## Game link
+You can play this game on [github pages](https://realhackcraft.github.io/blob-shooter/public)!
 
 ### Dependencies
 
-[Node.js](https://nodejs.org)
-
 [Tauri](https://tauri.app)
-
-## Contributors
-
-@realhackcraft,
-@FabianLars
