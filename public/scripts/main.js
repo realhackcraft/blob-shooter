@@ -110,8 +110,21 @@ function spawnOnEdge(width, height) {
   return { x: x, y: y };
 }
 
-function resetHighScore() {
-  if (confirm("Reset HighScore to 0?\nThis action CANNOT be undone.")) {
+async function resetHighScore() {
+  let reset = false;
+  const resetTitle = "Resetting highscore";
+  const resetDescription = "This action cannot be reverted. Are you sure?";
+  if (window.__TAURI__) {
+    const confirm = window.__TAURI__.dialog.confirm;
+    reset = await confirm(resetDescription, {
+      title: resetTitle,
+      kind: "warning",
+    });
+  } else {
+    reset = confirm(resetDescription);
+  }
+
+  if (reset) {
     highScore = 0;
     endHighScore.innerHTML = highScore;
     localStorage.setItem("highScore", highScore);
