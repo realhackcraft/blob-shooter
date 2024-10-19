@@ -41,9 +41,10 @@ autolabeler:
       - "/fix/i"
   - label: "enhancement"
     branch:
-      - '/feature\/.+/'
+      - "/feature\/.+/"
+      - "/[0-9]{1,5}-[a-z0-9-]+/" # Github autocreated issue branches
     body:
-      - "/#[0-9]{1,5}/" # Adjusted for GitHub issue numbers
+      - "/#[0-9]{1,5}/"
 exclude-contributors:
   - "realhackcraft"
 template: |
