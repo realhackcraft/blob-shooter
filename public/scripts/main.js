@@ -298,16 +298,35 @@ function animate(timestamp) {
 	// Interpolate and draw the frame
 	draw(interp);
 
+	const now = performance.now();
 	// Optional shaders
 	if (enableShaders) {
 		updateTexture();
 		const time = performance.now() / 1000; // Time in seconds for shader effects
 		render(time);
 	}
+	const time = performance.now() - now;
+	renderTimes.push(time);
+
+	console.log("---");
+	console.log(
+		`avg: ${renderTimes.reduce((partialSum, a) => partialSum + a, 0) / renderTimes.length} ms`,
+	);
+	console.log(
+		`max: ${renderTimes.reduce((previous, current) => {
+			return current > previous ? current : previous;
+		}, 0)}`,
+	);
+	console.log(
+		`min: ${renderTimes.reduce((previous, current) => {
+			return current < previous ? current : previous;
+		}, 5000)}`,
+	);
 
 	// Request the next frame
 	animationID = requestAnimationFrame(animate);
 }
+
 function draw(interp) {
 	ctx.fillStyle = backgroundColor;
 	ctx.fillRect(

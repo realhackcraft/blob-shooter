@@ -9,17 +9,26 @@ const endHighScore = document.getElementById("highScore");
 const fpsDisplay = document.getElementById("fpsDisplay");
 const fpsContainer = document.getElementById("fpsContainer");
 
-if (window.devicePixelRatio > 1) {
-	var canvasWidth = innerWidth;
-	var canvasHeight = innerHeight;
+// Performance variables
+const enableShaders = true;
+let showFPS = false;
+const enableRetinaResolution = true;
 
-	canvas.width = canvasWidth * window.devicePixelRatio;
-	canvas.height = canvasHeight * window.devicePixelRatio;
+function adjustPixelDensity() {
+	const scale = enableRetinaResolution ? window.devicePixelRatio : 1;
+
+	const canvasWidth = innerWidth;
+	const canvasHeight = innerHeight;
+
+	canvas.width = canvasWidth * scale;
+	canvas.height = canvasHeight * scale;
 	canvas.style.width = canvasWidth + "px";
 	canvas.style.height = canvasHeight + "px";
 
-	ctx.scale(window.devicePixelRatio, window.devicePixelRatio);
+	ctx.scale(scale, scale);
 }
+
+adjustPixelDensity();
 
 // Define commonly used value
 let canvasEdges = {
@@ -33,6 +42,8 @@ let canvasCenter = {
 	x: canvasEdges.right / 2,
 	y: canvasEdges.bottom / 2,
 };
+
+const renderTimes = [];
 
 const cursorImage = new Image();
 cursorImage.src = "./assets/img/cursor.png";
@@ -112,9 +123,6 @@ let delta = 0;
 let lastFrameTimeMs = 0;
 let framesThisSecond = 0;
 let timestep = Math.floor(1000 / FPS);
-
-const enableShaders = true;
-let showFPS = false;
 const startingBackgroundColor = randomEnemyColor();
 const bpDensity = 40;
 const backgroundColor = "rgba(0, 0, 0, 0.1)";
