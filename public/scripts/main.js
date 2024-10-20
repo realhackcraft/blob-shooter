@@ -298,30 +298,12 @@ function animate(timestamp) {
 	// Interpolate and draw the frame
 	draw(interp);
 
-	const now = performance.now();
 	// Optional shaders
 	if (enableShaders) {
 		updateTexture();
 		const time = performance.now() / 1000; // Time in seconds for shader effects
 		render(time);
 	}
-	const time = performance.now() - now;
-	renderTimes.push(time);
-
-	console.log("---");
-	console.log(
-		`avg: ${renderTimes.reduce((partialSum, a) => partialSum + a, 0) / renderTimes.length} ms`,
-	);
-	console.log(
-		`max: ${renderTimes.reduce((previous, current) => {
-			return current > previous ? current : previous;
-		}, 0)}`,
-	);
-	console.log(
-		`min: ${renderTimes.reduce((previous, current) => {
-			return current < previous ? current : previous;
-		}, 5000)}`,
-	);
 
 	// Request the next frame
 	animationID = requestAnimationFrame(animate);
@@ -336,6 +318,15 @@ function draw(interp) {
 		canvasEdges.bottom,
 	);
 
+	// Equivalent of ctx.save and ctx.restore,but only store the changed values
+	const previousGlobalAlpha = ctx.globalAlpha;
+	backgroundParticles.forEach((backgroundParticle) => {
+		backgroundParticle.draw(interp);
+	});
+	ctx.globalAlpha = previousGlobalAlpha;
+	// The above saves the transparency and reloads it after all
+	// backgroundParticles has been drawn, to save on reasignment calls
+
 	player.draw(interp);
 
 	enemies.forEach((enemy) => {
@@ -348,10 +339,6 @@ function draw(interp) {
 
 	player.projectiles.forEach((projectile) => {
 		projectile.draw(interp);
-	});
-
-	backgroundParticles.forEach((backgroundParticle) => {
-		backgroundParticle.draw(interp);
 	});
 
 	powerUps.forEach((powerUp) => {
