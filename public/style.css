@@ -20,6 +20,8 @@ canvas {
 	-ms-user-select: none;
 	user-select: none;
 	outline: none;
+	/* use cursor drawn by the canvas */
+	cursor: none;
 }
 
 h1,

@@ -1,8 +1,5 @@
-loadCursor();
-
 function init() {
 	score = 0;
-	scoreEl.innerHTML = score;
 	backgroundParticles = [];
 	enemies = [];
 	particles = [];
@@ -18,6 +15,10 @@ function init() {
 	clearInterval(powerUpInterval);
 	spawnBackgroundParticles();
 	sfx.background.play();
+	// CanvasRenderingContext2D config
+	ctx.font = "24pt IllusionBook";
+	ctx.lineWidth = "1pt";
+	ctx.imageSmoothingEnabled = false;
 }
 
 function spawnEnemies() {
@@ -132,7 +133,18 @@ async function resetHighScore() {
 	}
 }
 
-function createScoreLabel(score) {
+function drawScoreLabel() {
+	ctx.textAlign = "start";
+	ctx.textBaseline = "alphabetic";
+	ctx.fillStyle = scoreLabelFillColor;
+	ctx.strokeStyle = scoreLabelStrokeColor;
+
+	const scoreText = `Score: ${score}`;
+	ctx.fillText(scoreText, 40, 40);
+	ctx.strokeText(scoreText, 40, 40);
+}
+
+function createCursorScoreLabel(score) {
 	const x = mouse.x + randomNumber(-15, 15);
 	const y = mouse.y - 20 - randomNumber(-15, 15);
 	const scoreLabel = {
@@ -154,7 +166,6 @@ function updateScoreLabels(delta) {
 			toRemove.push(i);
 		}
 
-		console.log(delta);
 		score.lastY = score.y;
 		score.y -= 0.05 * delta; // Move label up
 		score.life -= delta; // Reduce the lifespan of the label
@@ -167,21 +178,39 @@ function updateScoreLabels(delta) {
 	});
 }
 
-function drawScoreLabels(interp) {
+function drawCursorScoreLabels(interp) {
+	// Adjust font settings
+	ctx.textAlign = "center";
+	ctx.textBaseline = "middle";
+	ctx.fillStyle = scoreLabelFillColor;
+	ctx.strokeStyle = scoreLabelStrokeColor;
+
 	scoreLabels.forEach((scoreLabel) => {
 		// Compute linearly interpolated positions
 		const y = scoreLabel.lastY + (scoreLabel.y - scoreLabel.lastY) * interp;
 
-		// Adjust font
-		ctx.font = "24pt IllusionBook";
-		ctx.fillStyle = scoreLabelFillColor;
-		ctx.lineWidth = "1pt";
-		ctx.strokeStyle = scoreLabelStrokeColor;
-		ctx.textAlign = "center";
-		ctx.textBaseline = "middle";
 		ctx.fillText(scoreLabel.score, scoreLabel.x, y);
 		ctx.strokeText(scoreLabel.score, scoreLabel.x, y);
 	});
+}
+
+function drawCursor(interp) {
+	const width = cursorImage.width;
+	const height = cursorImage.height;
+
+	// mouse.interpolatedX - width to center image on x, y instead of drawn on top
+	// left. There is no / 2 because the actual image is scaled 2x
+	ctx.drawImage(
+		cursorImage,
+		0,
+		0,
+		width,
+		height,
+		mouse.interpolatedX - width,
+		mouse.interpolatedY - height,
+		width * 2,
+		height * 2,
+	);
 }
 
 function reset() {
@@ -243,6 +272,12 @@ function animate(timestamp) {
 	}
 	framesThisSecond++;
 
+	// Update mouse
+	mouse.lastX = mouse.x;
+	mouse.lastY = mouse.y;
+	mouse.x = accurateMouse.x;
+	mouse.y = accurateMouse.y;
+
 	// Fixed timestep game logic
 	let numUpdateSteps = 0;
 	while (delta >= timestep) {
@@ -254,8 +289,14 @@ function animate(timestamp) {
 		}
 	}
 
+	const interp = delta / timestep;
+
+	// Update mouse interp
+	mouse.interpolatedX = mouse.lastX + (mouse.x - mouse.lastX) * interp;
+	mouse.interpolatedY = mouse.lastY + (mouse.y - mouse.lastY) * interp;
+
 	// Interpolate and draw the frame
-	draw(delta / timestep);
+	draw(interp);
 
 	// Optional shaders
 	if (enableShaders) {
@@ -298,9 +339,22 @@ function draw(interp) {
 		powerUp.draw(interp);
 	});
 
-	drawScoreLabels(interp);
+	drawCursorScoreLabels(interp);
 
-	fpsDisplay.innerHTML = Math.round(FPS).toString();
+	drawCursor(interp);
+
+	drawScoreLabel();
+
+	if (showFPS) {
+		fpsDisplay.innerHTML = Math.round(FPS).toString();
+		if (fpsContainer.hidden) {
+			fpsContainer.hidden = false;
+		}
+	} else {
+		if (!fpsContainer.hidden) {
+			fpsContainer.hidden = true;
+		}
+	}
 }
 
 function update(delta) {
@@ -391,7 +445,6 @@ function update(delta) {
 						player.damage + 20,
 					);
 				}
-				scoreEl.innerHTML = score.toString();
 				stats.damageDealt = parseInt(stats.damageDealt) + player.damage;
 				localStorage.setItem("damageDealt", stats.damageDealt);
 			}
@@ -441,7 +494,7 @@ function removeEntityIfOffscreen(entity, index, entityArray) {
 }
 
 function killEnemy(enemyIndex, projectileIndex, enemy, projectile, newScore) {
-	createScoreLabel(newScore);
+	createCursorScoreLabel(newScore);
 	changeBPColor(enemy.color);
 	enemies.splice(enemyIndex, 1);
 	player.projectiles.splice(projectileIndex, 1);
@@ -451,7 +504,7 @@ function killEnemy(enemyIndex, projectileIndex, enemy, projectile, newScore) {
 }
 
 function damageEnemy(enemy, projectile, projectileIndex, newScore) {
-	createScoreLabel(newScore);
+	createCursorScoreLabel(newScore);
 	gsap.to(enemy, { radius: enemy.radius - player.damage });
 	player.projectiles.splice(projectileIndex, 1);
 	score += newScore;

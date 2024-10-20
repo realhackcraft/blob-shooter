@@ -12,7 +12,7 @@
  * @author Hackcraft_
  */
 function randomNumber(min, max) {
-  return Math.random() * (max - min) + min;
+	return Math.random() * (max - min) + min;
 }
 
 /**
@@ -26,13 +26,13 @@ function randomNumber(min, max) {
  * @author Hackcraft_
  */
 function randomInt(min, max) {
-  min = Math.ceil(min);
-  max = Math.floor(max);
-  return Math.floor(Math.random() * (max - min + 1)) + min;
+	min = Math.ceil(min);
+	max = Math.floor(max);
+	return Math.floor(Math.random() * (max - min + 1)) + min;
 }
 
 function chooseRandom(list) {
-  return list[randomInt(0, list.length - 1)];
+	return list[randomInt(0, list.length - 1)];
 }
 
 /**
@@ -47,7 +47,7 @@ function chooseRandom(list) {
  * @author Hackcraft_
  */
 function distance(a = { x, y }, b = { x, y }) {
-  return Math.hypot(a.x - b.x, a.y - b.y);
+	return Math.hypot(a.x - b.x, a.y - b.y);
 }
 
 /**
@@ -62,7 +62,7 @@ function distance(a = { x, y }, b = { x, y }) {
  * @author Hackcraft_
  */
 function angleBetween(a = { x, y }, b = { x, y }) {
-  return Math.atan2(a.y - b.y, a.x - b.x);
+	return Math.atan2(a.y - b.y, a.x - b.x);
 }
 
 /**
@@ -76,12 +76,12 @@ function angleBetween(a = { x, y }, b = { x, y }) {
  * @author Hackcraft_
  */
 function isOffScreen(pos = { x, y }, width, height) {
-  return (
-    pos.x + width < canvasEdges.left ||
-    pos.x - width > canvasEdges.right ||
-    pos.y + height < canvasEdges.top ||
-    pos.y - height > canvasEdges.bottom
-  );
+	return (
+		pos.x + width < canvasEdges.left ||
+		pos.x - width > canvasEdges.right ||
+		pos.y + height < canvasEdges.top ||
+		pos.y - height > canvasEdges.bottom
+	);
 }
 
 /**
@@ -92,7 +92,7 @@ function isOffScreen(pos = { x, y }, width, height) {
  * @author Hackcraft_
  */
 function randomEnemyColor() {
-  return `hsl(${Math.random() * 360}, 50%, 50%)`;
+	return `hsl(${Math.random() * 360}, 50%, 50%)`;
 }
 
 /**
@@ -109,20 +109,7 @@ function randomEnemyColor() {
  * @author Hackcraft_
  */
 function initLocalStorageIfNull(name, initVal) {
-  return localStorage.getItem(name) === null
-    ? localStorage.setItem(name, initVal)
-    : localStorage.getItem(name);
-}
-
-/**
- * If the fancyCursor variable is true, then load the magicMouse library.
- * NOTE: do not use until variables.js is loaded!
- * @author Hackcraft_
- */
-function loadCursor() {
-  document.documentElement.style.cursor =
-    "url('./assets/img/cursor.png'), auto";
-  document.querySelector(".reset").style.cursor =
-    "url('./assets/img/cursor.png'), auto";
-  startGameBtn.style.cursor = "url('./assets/img/cursor.png'), auto";
+	return localStorage.getItem(name) === null
+		? localStorage.setItem(name, initVal)
+		: localStorage.getItem(name);
 }
