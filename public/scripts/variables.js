@@ -82,6 +82,7 @@ let backgroundParticles = [];
 let enemies = [];
 let particles = [];
 let powerUps = [];
+let scoreLabels = [];
 let start = false;
 let mouse = { x: 0, y: 0 };
 let mouseDown;
@@ -93,7 +94,7 @@ let FPS = 60;
 let delta = 0;
 let lastFrameTimeMs = 0;
 let framesThisSecond = 0;
-const timestep = Math.floor(1000 / FPS);
+let timestep = Math.floor(1000 / FPS);
 
 const enableShaders = true;
 const startingBackgroundColor = randomEnemyColor();
@@ -108,6 +109,7 @@ let randomPos = {
 };
 const player = new Player(canvasCenter.x, canvasCenter.y, 0.01, 10, "white");
 
-const scoreLabelColor = "white";
+const scoreLabelFillColor = "white";
+const scoreLabelStrokeColor = "black";
 
 let enemyInterval, powerUpInterval;

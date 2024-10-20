@@ -1,89 +1,94 @@
+@font-face {
+	font-family: "IllusionBook";
+	src: url("assets/font/IllusionBook.woff2") format("woff2");
+}
+
 * {
-  font-family: Arial, sans-serif;
+	font-family: Arial, sans-serif;
 }
 
 body {
-  margin: 0;
-  overflow: hidden;
+	margin: 0;
+	overflow: hidden;
 }
 
 canvas {
-  background-color: black;
-  -webkit-user-select: none;
-  -khtml-user-select: none;
-  -moz-user-select: none;
-  -ms-user-select: none;
-  user-select: none;
-  outline: none;
+	background-color: black;
+	-webkit-user-select: none;
+	-khtml-user-select: none;
+	-moz-user-select: none;
+	-ms-user-select: none;
+	user-select: none;
+	outline: none;
 }
 
 h1,
 p,
 a {
-  margin: 0;
+	margin: 0;
 }
 
 p,
 a {
-  margin-bottom: 1rem;
+	margin-bottom: 1rem;
 }
 
 h1 {
-  font-size: 300%;
-  font-weight: bold;
-  line-height: 1;
+	font-size: 300%;
+	font-weight: bold;
+	line-height: 1;
 }
 
 a {
-  color: gray;
+	color: gray;
 }
 
 button {
-  font-size: large;
-  background-color: rgb(59 130 246);
-  width: 100%;
-  padding: 0.75rem 10px;
-  color: white;
-  border-radius: 10px;
+	font-size: large;
+	background-color: rgb(59 130 246);
+	width: 100%;
+	padding: 0.75rem 10px;
+	color: white;
+	border-radius: 10px;
 }
 
 .label {
-  font-size: 75%;
-  color: gray;
+	font-size: 75%;
+	color: gray;
 }
 
 *,
 ::before,
 ::after {
-  border-width: 0;
-  border-style: solid;
+	border-width: 0;
+	border-style: solid;
 }
 
 .scoreboard {
-  user-select: none;
-  margin-left: 10px;
-  margin-top: 5px;
-  position: fixed;
-  color: white;
+	user-select: none;
+	margin-left: 10px;
+	margin-top: 5px;
+	position: fixed;
+	color: white;
 }
 
 .float {
-  user-select: none;
-  position: fixed;
-  top: 0;
-  bottom: 0;
-  left: 0;
-  right: 0;
-  display: flex;
-  justify-content: center;
-  align-items: center;
+	user-select: none;
+	position: fixed;
+	top: 0;
+	bottom: 0;
+	left: 0;
+	right: 0;
+	display: flex;
+	justify-content: center;
+	align-items: center;
 }
 
 .background {
-  background-color: white;
-  max-width: 28rem;
-  padding: 6%;
-  width: 100%;
-  text-align: center;
-  border-radius: 10px;
+	background-color: white;
+	max-width: 28rem;
+	padding: 6%;
+	width: 100%;
+	text-align: center;
+	border-radius: 10px;
 }
