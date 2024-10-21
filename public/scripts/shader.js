@@ -58,7 +58,6 @@ function initShaders() {
 function initBuffers() {
 	positionBuffer = gl.createBuffer();
 	gl.bindBuffer(gl.ARRAY_BUFFER, positionBuffer);
-	// Flip Y coordinates: -1, 1 instead of 1, -1
 	const positions = new Float32Array([-1, 1, 1, 1, -1, -1, 1, -1]);
 	gl.bufferData(gl.ARRAY_BUFFER, positions, gl.STATIC_DRAW);
 }
@@ -82,7 +81,6 @@ function createTexture(canvas) {
 function render(iTime) {
 	// Clear the WebGL canvas
 	gl.clear(gl.COLOR_BUFFER_BIT);
-	gl.viewport(0, 0, gl.canvas.width, gl.canvas.height);
 
 	// Bind the texture
 	gl.bindTexture(gl.TEXTURE_2D, texture);
@@ -91,11 +89,10 @@ function render(iTime) {
 	const resolutionLocation = gl.getUniformLocation(program, "iResolution");
 	const timeLocation = gl.getUniformLocation(program, "iTime");
 
-	gl.uniform3f(resolutionLocation, gl.canvas.width, gl.canvas.height, 0);
+	gl.uniform3f(resolutionLocation, glcanvas.width, glcanvas.height, 0);
 	gl.uniform1f(timeLocation, iTime);
 
-	// Bind the position buffer
-	gl.bindBuffer(gl.ARRAY_BUFFER, positionBuffer);
+	// Set up the position attribute once (not in every frame)
 	const positionLocation = gl.getAttribLocation(program, "a_position");
 	gl.enableVertexAttribArray(positionLocation);
 	gl.vertexAttribPointer(positionLocation, 2, gl.FLOAT, false, 0, 0);
