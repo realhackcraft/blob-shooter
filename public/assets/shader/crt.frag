@@ -25,20 +25,20 @@ void main() {
     uv = curve(uv); // Apply the curve transformation
 
     // Sample the texture
-    vec3 oricol = texture2D(iChannel0, uv).xyz;
     vec3 col;
 
     // Create some dynamic animation based on time
     float x = sin(0.3 * iTime + uv.y * 21.0) * sin(0.7 * iTime + uv.y * 29.0) * sin(0.3 + 0.33 * iTime + uv.y * 31.0) * 0.0017;
 
-    col.r = texture2D(iChannel0, vec2(x + uv.x + 0.001, uv.y + 0.001)).x + 0.05;
-    col.g = texture2D(iChannel0, vec2(x + uv.x, uv.y - 0.002)).y + 0.05;
-    col.b = texture2D(iChannel0, vec2(x + uv.x - 0.002, uv.y)).z + 0.05;
+    // Chromatic abberation
+    col.r = texture2D(iChannel0, vec2(x + uv.x + 0.0005, uv.y + 0.0004)).x + 0.05;
+    col.g = texture2D(iChannel0, vec2(x + uv.x, uv.y - 0.0005)).y + 0.05;
+    col.b = texture2D(iChannel0, vec2(x + uv.x - 0.0005, uv.y)).z + 0.05;
 
-    // Additional color modifications
-    col.r += 0.08 * texture2D(iChannel0, 0.75 * vec2(x + 0.025, -0.027) + vec2(uv.x + 0.001, uv.y + 0.001)).x;
-    col.g += 0.05 * texture2D(iChannel0, 0.75 * vec2(x - 0.022, -0.02) + vec2(uv.x, uv.y - 0.002)).y;
-    col.b += 0.08 * texture2D(iChannel0, 0.75 * vec2(x - 0.02, -0.018) + vec2(uv.x - 0.002, uv.y)).z;
+    // Additional chromatic abberation dimmer but farther away
+    col.r += 0.05 * texture2D(iChannel0, 0.75 * vec2(x + 0.025, -0.027) + vec2(uv.x + 0.001, uv.y + 0.001)).x;
+    col.g += 0.02 * texture2D(iChannel0, 0.75 * vec2(x - 0.022, -0.02) + vec2(uv.x, uv.y - 0.002)).y;
+    col.b += 0.05 * texture2D(iChannel0, 0.75 * vec2(x - 0.02, -0.018) + vec2(uv.x - 0.002, uv.y)).z;
 
     // Color adjustment
     col = clamp(col * 0.6 + 0.4 * col * col * 1.0, 0.0, 1.0);

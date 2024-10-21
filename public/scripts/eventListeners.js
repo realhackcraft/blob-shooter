@@ -68,22 +68,11 @@ addEventListener("keydown", (e) => {
 		case "ArrowRight":
 			player.direction.x = "right";
 			break;
-	}
-});
-
-addEventListener("keydown", (e) => {
-	if (!start) return;
-	switch (e.code) {
 		case "Space":
 			player.sprint = true;
 			break;
-	}
-});
-
-addEventListener("keyup", (e) => {
-	switch (e.code) {
-		case "Space":
-			player.sprint = false;
+		case "KeyF":
+			showFPS = !showFPS;
 			break;
 	}
 });
@@ -102,6 +91,9 @@ addEventListener("keyup", (e) => {
 		case "ArrowRight":
 			player.direction.x = "none";
 			break;
+		case "Space":
+			player.sprint = false;
+			break;
 	}
 });
 
@@ -114,8 +106,8 @@ addEventListener("mouseup", () => {
 });
 
 addEventListener("mousemove", (event) => {
-	mouse.x = event.clientX; // Gets Mouse X
-	mouse.y = event.clientY; // Gets Mouse Y
+	accurateMouse.x = event.clientX; // Gets Mouse X
+	accurateMouse.y = event.clientY; // Gets Mouse Y
 });
 
 addEventListener("resize", () => {

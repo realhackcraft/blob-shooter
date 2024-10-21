@@ -92,7 +92,7 @@ function isOffScreen(pos = { x, y }, width, height) {
  * @author Hackcraft_
  */
 function randomEnemyColor() {
-  return `hsl(${Math.random() * 360}, 50%, 50%)`;
+  return hsluvToHex(Math.random() * 360, 50, 50);
 }
 
 /**
@@ -113,16 +113,130 @@ function initLocalStorageIfNull(name, initVal) {
     ? localStorage.setItem(name, initVal)
     : localStorage.getItem(name);
 }
+// Conversion constants
+const m = [
+  [3.240969941904521, -1.537383177570093, -0.498610760293],
+  [-0.96924363628087, 1.87596750150772, 0.041555057407175],
+  [0.055630079696993, -0.20397695888897, 1.056971514242878],
+];
 
-/**
- * If the fancyCursor variable is true, then load the magicMouse library.
- * NOTE: do not use until variables.js is loaded!
- * @author Hackcraft_
- */
-function loadCursor() {
-  document.documentElement.style.cursor =
-    "url('./assets/img/cursor.png'), auto";
-  document.querySelector(".reset").style.cursor =
-    "url('./assets/img/cursor.png'), auto";
-  startGameBtn.style.cursor = "url('./assets/img/cursor.png'), auto";
+const epsilon = 0.0088564516;
+const kappa = 903.2962962;
+
+// Function to convert from HSLuv to LCH
+function hsluvToLch(H, S, L) {
+  if (L > 99.9999999 || L < 0.00000001) {
+    return [L, 0, H]; // Edge case for very high or low lightness
+  }
+
+  const maxChroma = maxChromaForLH(L, H);
+  const C = (maxChroma / 100) * S;
+  return [L, C, H];
+}
+
+// Function to convert from LCH to LAB
+function lchToLab([L, C, H]) {
+  const hRad = (H / 360) * 2 * Math.PI;
+  const a = Math.cos(hRad) * C;
+  const b = Math.sin(hRad) * C;
+  return [L, a, b];
+}
+
+// Function to convert from LAB to XYZ
+function labToXyz([L, a, b]) {
+  const y = (L + 16) / 116;
+  const x = a / 500 + y;
+  const z = y - b / 200;
+
+  const x3 = Math.pow(x, 3);
+  const z3 = Math.pow(z, 3);
+
+  const X = 0.95047 * (x3 > epsilon ? x3 : (x - 16 / 116) / 7.787);
+  const Y =
+    1.0 * (L > kappa * epsilon ? Math.pow((L + 16) / 116, 3) : L / kappa);
+  const Z = 1.08883 * (z3 > epsilon ? z3 : (z - 16 / 116) / 7.787);
+
+  return [X, Y, Z];
+}
+
+// Function to convert from XYZ to linear RGB
+function xyzToLinearRgb([X, Y, Z]) {
+  const r = m[0][0] * X + m[0][1] * Y + m[0][2] * Z;
+  const g = m[1][0] * X + m[1][1] * Y + m[1][2] * Z;
+  const b = m[2][0] * X + m[2][1] * Y + m[2][2] * Z;
+  return [r, g, b];
+}
+
+// Function to convert linear RGB to standard RGB
+function linearRgbToRgb([r, g, b]) {
+  return [
+    r <= 0.0031308 ? 12.92 * r : 1.055 * Math.pow(r, 1 / 2.4) - 0.055,
+    g <= 0.0031308 ? 12.92 * g : 1.055 * Math.pow(g, 1 / 2.4) - 0.055,
+    b <= 0.0031308 ? 12.92 * b : 1.055 * Math.pow(b, 1 / 2.4) - 0.055,
+  ];
+}
+
+// Helper function: clamp RGB values between 0 and 1
+function clamp(value, min, max) {
+  return Math.min(Math.max(value, min), max);
+}
+
+// Function to convert RGB to HEX
+function rgbToHex([r, g, b]) {
+  r = Math.round(clamp(r, 0, 1) * 255);
+  g = Math.round(clamp(g, 0, 1) * 255);
+  b = Math.round(clamp(b, 0, 1) * 255);
+  return `#${((1 << 24) + (r << 16) + (g << 8) + b).toString(16).slice(1).toUpperCase()}`;
+}
+
+// Function to get maximum chroma for given L and H
+function maxChromaForLH(L, H) {
+  const hRad = (H / 360) * 2 * Math.PI;
+  const bounds = getBounds(L);
+  let min = Infinity;
+
+  for (const bound of bounds) {
+    const length = lengthOfRayUntilIntersect(hRad, bound);
+    if (length >= 0) {
+      min = Math.min(min, length);
+    }
+  }
+
+  return min;
+}
+
+// Function to get chroma bounds for a given L
+function getBounds(L) {
+  const sub1 = Math.pow(L + 16, 3) / 1560896;
+  const sub2 = sub1 > epsilon ? sub1 : L / kappa;
+
+  const bounds = [];
+  for (let c = 0; c < 3; c++) {
+    const m1 = m[c][0];
+    const m2 = m[c][1];
+    const m3 = m[c][2];
+    for (let t = 0; t < 2; t++) {
+      const top1 = (284517 * m1 - 94839 * m3) * sub2;
+      const top2 =
+        (838422 * m3 + 769860 * m2 + 731718 * m1) * L * sub2 - 769860 * t * L;
+      const bottom = (632260 * m3 - 126452 * m2) * sub2 + 126452 * t;
+      bounds.push({ slope: top1 / bottom, intercept: top2 / bottom });
+    }
+  }
+  return bounds;
+}
+
+// Function to get intersection of chroma bound line
+function lengthOfRayUntilIntersect(theta, line) {
+  return line.intercept / (Math.sin(theta) - line.slope * Math.cos(theta));
+}
+
+// Main function: HSLuv to HEX
+function hsluvToHex(H, S, L) {
+  const lch = hsluvToLch(H, S, L);
+  const lab = lchToLab(lch);
+  const xyz = labToXyz(lab);
+  const linearRgb = xyzToLinearRgb(xyz);
+  const rgb = linearRgbToRgb(linearRgb);
+  return rgbToHex(rgb);
 }
