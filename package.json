@@ -1,8 +1,8 @@
 {
   "name": "blob-shooter",
   "scripts": {
-    "dev": "bunx tsc; bunx rspack build --config ./webpack.dev.config.js; cp -a assets src/index.html src/style.css dist2",
-    "build": "bunx tsc; bunx rspack build --config ./webpack.build.config.js; cp -a assets src/index.html src/style.css dist2;"
+    "dev": "bunx tsc; bunx rspack build --config ./webpack.dev.config.js; cp -R assets src/index.html src/style.css dist2",
+    "build": "bunx tsc; bunx rspack build --config ./webpack.build.config.js; cp -R assets src/index.html src/style.css dist2;"
   },
   "devDependencies": {
     "@rspack/cli": "^1.0.14",
