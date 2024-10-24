@@ -1,7 +1,6 @@
 {
   "$schema": "https://schema.tauri.app/config/2.0.0-rc",
   "productName": "blob-shooter",
-  "version": "1.0.4",
   "identifier": "net.hackcraft.blob-shooter",
   "build": {
     "frontendDist": "../dist2",
