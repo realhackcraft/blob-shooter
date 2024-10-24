@@ -2,7 +2,7 @@
   "name": "blob-shooter",
   "scripts": {
     "dev": "bunx tsc; bunx webpack build --config ./webpack.dev.config.js; cp -a assets src/index.html src/style.css dist2; mv dist2/bundle.js dist2/bundle.min.js",
-    "build": "bunx tsc; bunx webpack build --config ./webpack.build.config.js;cp -a assets src/index.html src/style.css dist2; bunx google-closure-compiler --js=dist/bundle.js --js_output_file=dist/bundle.min.js -O ADVANCED; rm -r dist1"
+    "build": "bunx tsc; bunx webpack build --config ./webpack.build.config.js;cp -a assets src/index.html src/style.css dist2; bunx google-closure-compiler --js=dist2/bundle.js --js_output_file=dist2/bundle.min.js -O ADVANCED; rm -r dist1; rm dist2/bundle.js"
   },
   "devDependencies": {
     "@tauri-apps/cli": "^2.0.4",
