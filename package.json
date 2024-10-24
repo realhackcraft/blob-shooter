@@ -1,12 +1,14 @@
 {
   "name": "blob-shooter",
   "scripts": {
-    "dev": "bunx tsc; bunx webpack build --config ./webpack.dev.config.js; cp -a assets src/index.html src/style.css dist2; mv dist2/bundle.js dist2/bundle.min.js",
-    "build": "bunx tsc; bunx webpack build --config ./webpack.build.config.js;cp -a assets src/index.html src/style.css dist2; bunx google-closure-compiler --js=dist2/bundle.js --js_output_file=dist2/bundle.min.js -O ADVANCED; rm -r dist1; rm dist2/bundle.js"
+    "dev": "bunx tsc; bunx rspack build --config ./webpack.dev.config.js; cp -a assets src/index.html src/style.css dist2",
+    "build": "bunx tsc; bunx rspack build --config ./webpack.build.config.js; cp -a assets src/index.html src/style.css dist2;"
   },
   "devDependencies": {
+    "@rspack/cli": "^1.0.14",
+    "@rspack/core": "^1.0.14",
     "@tauri-apps/cli": "^2.0.4",
-    "google-closure-compiler": "^20240317.0.0",
+    "uglify-js": "^3.19.3",
     "webpack": "^5.95.0",
     "webpack-cli": "^5.1.4"
   },
