@@ -1,0 +1,37 @@
+<!doctype html>
+
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta content="width=device-width, initial-scale=1.0" name="viewport" />
+    <title>Blob Shooter</title>
+
+    <script defer type="module" src="bundle.min.js"></script>
+
+    <!-- Stylesheets -->
+    <link href="style.css" rel="stylesheet" />
+  </head>
+
+  <body id="body">
+    <div class="scoreboard">
+      <p hidden id="fpsContainer">FPS: <span id="fpsDisplay">0</span></p>
+    </div>
+
+    <div class="float" id="menu">
+      <div class="background">
+        <h1 id="bigScore">0</h1>
+        <p class="label">Points</p>
+        <h1 id="highScore">0</h1>
+        <p class="label">
+          Highest Score
+          <a class="reset" id="reset">Reset</a>
+        </p>
+        <div>
+          <button id="start">Start Game</button>
+        </div>
+      </div>
+    </div>
+    <canvas height="500" id="glcanvas" width="500"></canvas>
+    <canvas hidden height="500" id="canvas" width="500"></canvas>
+  </body>
+</html>

@@ -4,7 +4,9 @@
   "version": "1.0.4",
   "identifier": "net.hackcraft.blob-shooter",
   "build": {
-    "frontendDist": "../public"
+    "frontendDist": "../dist2",
+    "beforeDevCommand": "bun run dev",
+    "beforeBuildCommand": "bun run build"
   },
   "app": {
     "windows": [
